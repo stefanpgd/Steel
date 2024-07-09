@@ -13,8 +13,8 @@ void Editor::Update(float deltaTime)
 {
 	// Record FPS //
 	frameCount++;
-	int index = frameCount % averageFPS.size();
-	averageFPS[index] = int(1.0f / deltaTime);
+	int index = frameCount % deltaTimeLog.size();
+	deltaTimeLog[index] = deltaTime;
 
 	if(ImGui::BeginMainMenuBar())
 	{
@@ -23,14 +23,14 @@ void Editor::Update(float deltaTime)
 		ImGui::Text("Average FPS:");
 		ImGui::PopFont();
 
-		int sum = 0;
-		for(int fps : averageFPS)
+		unsigned int frameSum = 0;
+		for(float dt : deltaTimeLog)
 		{
-			sum += fps;
+			frameSum += unsigned int(1.0f / dt);
 		}
-		sum /= 60;
+		frameSum /= deltaTimeLog.size();
 
-		std::string fps = std::to_string(sum);
+		std::string fps = std::to_string(frameSum);
 		ImGui::Text(fps.c_str());
 		ImGui::Separator();
 

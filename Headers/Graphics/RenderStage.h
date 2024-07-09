@@ -1,8 +1,6 @@
 #pragma once
 
-#include <d3d12.h>
-#include <wrl.h>
-using namespace Microsoft::WRL;
+#include "Graphics/DXCommon.h"
 
 class Window;
 class DXRootSignature;
@@ -21,7 +19,7 @@ class RenderStage
 public:
 	RenderStage();
 
-	virtual void RecordStage(ComPtr<ID3D12GraphicsCommandList2> commandList) = 0;
+	virtual void RecordStage(ComPtr<ID3D12GraphicsCommandList4> commandList) = 0;
 
 protected:
 	DXPipeline* pipeline;

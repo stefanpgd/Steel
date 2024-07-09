@@ -1,21 +1,18 @@
 #pragma once
 
-#include <wrl.h>
-#include <d3d12.h>
-#include <d3dx12.h>
-using namespace Microsoft::WRL;
+#include "Graphics/DXCommon.h"
 
 class DXDevice
 {
 public:
-	DXDevice();
+	DXDevice(bool checkForRayTracingSupport = false);
 
-	ComPtr<ID3D12Device2> Get();
-	ID3D12Device2* GetAddress();
+	ComPtr<ID3D12Device5> Get();
+	ID3D12Device5* GetAddress();
 
 private:
 	void DebugLayer();
 	void SetupMessageSeverities();
 
-	ComPtr<ID3D12Device2> device;
+	ComPtr<ID3D12Device5> device;
 };

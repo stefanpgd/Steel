@@ -16,7 +16,7 @@ private:
 
 private:
 	float deltaTime;
-	std::array<int, 60> averageFPS;
+	std::array<float, 300> deltaTimeLog;
 	unsigned int frameCount = 0;
 
 	struct ImFont* baseFont;

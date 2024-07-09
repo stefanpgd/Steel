@@ -90,6 +90,9 @@
     <ClCompile Include="Source\Framework\Input.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Graphics\DXUploadBuffer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Headers\Framework\Application.h">
@@ -180,6 +183,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Headers\Framework\Input.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\Graphics\DXCommon.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\Graphics\DXUploadBuffer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

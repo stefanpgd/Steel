@@ -1,14 +1,11 @@
 #pragma once
 
-#include "d3d12.h"
-#include "d3dx12.h"
-#include "wrl.h"
-using namespace Microsoft::WRL;
+#include "Graphics/DXCommon.h"
 
 class DXRootSignature
 {
 public:
-	DXRootSignature(CD3DX12_ROOT_PARAMETER1* rootParameters, const unsigned int numberOfParameters, 
+	DXRootSignature(CD3DX12_ROOT_PARAMETER1* rootParameters, const unsigned int numberOfParameters,
 		D3D12_ROOT_SIGNATURE_FLAGS flags = D3D12_ROOT_SIGNATURE_FLAG_NONE);
 
 	ComPtr<ID3D12RootSignature> Get();

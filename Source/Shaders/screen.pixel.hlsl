@@ -19,11 +19,6 @@ float3 Palette(float t)
 float4 main(PixelIN IN) : SV_TARGET
 {
     float4 color = screenTexture.Sample(LinearSampler, IN.TexCoord);
-    //float3 p = float3(0.0f, 0.0f, 0.0f);
-    //if(color.r > 0.05)
-    //{
-    //    p = Palette(color.r);
-    //}
     
     return float4(color.rgb, 1.0f);
 }

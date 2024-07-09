@@ -4,10 +4,10 @@
 
 #include <cassert>
 
-DXDescriptorHeap::DXDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE type, unsigned int numberOfDescriptors, D3D12_DESCRIPTOR_HEAP_FLAGS flags) 
+DXDescriptorHeap::DXDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE type, unsigned int numberOfDescriptors, D3D12_DESCRIPTOR_HEAP_FLAGS flags)
 	: descriptorCount(numberOfDescriptors)
 {
-	ComPtr<ID3D12Device2> device = DXAccess::GetDevice();
+	ComPtr<ID3D12Device5> device = DXAccess::GetDevice();
 	D3D12_DESCRIPTOR_HEAP_DESC description = {};
 	description.NumDescriptors = numberOfDescriptors;
 	description.Type = type;
@@ -48,4 +48,9 @@ unsigned int DXDescriptorHeap::GetNextAvailableIndex()
 	unsigned int index = currentDescriptorIndex;
 	currentDescriptorIndex++;
 	return index;
+}
+
+unsigned int DXDescriptorHeap::GetDescriptorSize()
+{
+	return 0;
 }

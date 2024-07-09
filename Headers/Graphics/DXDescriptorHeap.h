@@ -1,15 +1,11 @@
 #pragma once
 
-#include <wrl.h>
-using namespace Microsoft::WRL;
-
-#include <d3d12.h>
-#include <d3dx12.h>
+#include "Graphics/DXCommon.h"
 
 class DXDescriptorHeap
 {
 public:
-	DXDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE type, unsigned int numberOfDescriptors, 
+	DXDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE type, unsigned int numberOfDescriptors,
 		D3D12_DESCRIPTOR_HEAP_FLAGS flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE);
 
 	ComPtr<ID3D12DescriptorHeap> Get();
@@ -18,6 +14,7 @@ public:
 	CD3DX12_GPU_DESCRIPTOR_HANDLE GetGPUHandleAt(unsigned int index);
 
 	unsigned int GetNextAvailableIndex();
+	unsigned int GetDescriptorSize();
 
 private:
 	ComPtr<ID3D12DescriptorHeap> descriptorHeap;

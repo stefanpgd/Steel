@@ -2,8 +2,9 @@
 #include "Graphics/DXUtilities.h"
 
 #include <dxgi1_6.h>
+#include <exception>
 
-DXDevice::DXDevice()
+DXDevice::DXDevice(bool checkForRayTracingSupport)
 {
 	// 1. Enable Debug Layer in case we run with debug mode //
 	DebugLayer();
@@ -32,7 +33,7 @@ DXDevice::DXDevice()
 		// Does it have more dedicated video memory than the other adapters? If so, store it as the most capable adapter
 		if((dxgiAdapterDesc1.Flags & DXGI_ADAPTER_FLAG_SOFTWARE) == 0 &&
 			SUCCEEDED(D3D12CreateDevice(dxgiAdapter1.Get(),
-				D3D_FEATURE_LEVEL_11_0, __uuidof(ID3D12Device), nullptr)) &&
+				D3D_FEATURE_LEVEL_12_1, __uuidof(ID3D12Device), nullptr)) &&
 			dxgiAdapterDesc1.DedicatedVideoMemory > maxDedicatedVideoMemory)
 		{
 			maxDedicatedVideoMemory = dxgiAdapterDesc1.DedicatedVideoMemory;
@@ -41,18 +42,32 @@ DXDevice::DXDevice()
 	}
 
 	// 4. With the chosen Adapter create the Device // 
-	ThrowIfFailed(D3D12CreateDevice(dxgiAdapter4.Get(), D3D_FEATURE_LEVEL_11_0, IID_PPV_ARGS(&device)));
+	ThrowIfFailed(D3D12CreateDevice(dxgiAdapter4.Get(), D3D_FEATURE_LEVEL_12_1, IID_PPV_ARGS(&device)));
 
 	// 5. Set up message severities for debug messages // 
 	SetupMessageSeverities();
+
+	// Optional: Check if the device supports DXR //
+	if(checkForRayTracingSupport)
+	{
+		// Verify if Ray Tracing is supported //
+		D3D12_FEATURE_DATA_D3D12_OPTIONS5 optionData = {};
+		HRESULT result = device->CheckFeatureSupport(D3D12_FEATURE_D3D12_OPTIONS5, &optionData, sizeof(optionData));
+
+		if(FAILED(result) || optionData.RaytracingTier < D3D12_RAYTRACING_TIER_1_0)
+		{
+			LOG(Log::MessageType::Error, "Device/Driver does NOT support (DX)Ray Tracing!");
+			throw std::exception();
+		}
+	}
 }
 
-ComPtr<ID3D12Device2> DXDevice::Get()
+ComPtr<ID3D12Device5> DXDevice::Get()
 {
 	return device;
 }
 
-ID3D12Device2* DXDevice::GetAddress()
+ID3D12Device5* DXDevice::GetAddress()
 {
 	return device.Get();
 }

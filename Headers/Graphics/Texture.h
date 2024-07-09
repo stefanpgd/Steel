@@ -1,31 +1,33 @@
 #pragma once
 
-#include <d3d12.h>
-#include <d3dx12.h>
-#include <wrl.h>
-using namespace Microsoft::WRL;
+#include "Graphics/DXCommon.h"
 
 class Texture
 {
 public:
-	Texture(void* data, int width, int height, 
+	Texture(int width, int height, DXGI_FORMAT format);
+	Texture(void* data, int width, int height,
 		DXGI_FORMAT format = DXGI_FORMAT_R8G8B8A8_UNORM, unsigned int formatSizeInBytes = 4);
 	~Texture();
 
 	int GetWidth();
 	int GetHeight();
+	DXGI_FORMAT GetFormat();
 
 	int GetSRVIndex();
 	int GetUAVIndex();
 	CD3DX12_GPU_DESCRIPTOR_HANDLE GetSRV();
 	CD3DX12_GPU_DESCRIPTOR_HANDLE GetUAV();
 
-	DXGI_FORMAT GetFormat();
+	ID3D12Resource* GetAddress();
 	ComPtr<ID3D12Resource> GetResource();
-	D3D12_GPU_VIRTUAL_ADDRESS GetGPULocation();
+	D3D12_GPU_VIRTUAL_ADDRESS GetGPUVirtualAddress();
 
 private:
-	void UploadData(void* data, int width, int height);
+	void AllocateTexture();
+	void UploadData(void* data);
+
+	void CreateDescriptors();
 
 private:
 	ComPtr<ID3D12Resource> textureResource;

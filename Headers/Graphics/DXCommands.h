@@ -1,10 +1,8 @@
 #pragma once
+
+#include "Graphics/DXCommon.h"
 #include "Graphics/Window.h"
 
-#include <wrl.h>
-using namespace Microsoft::WRL;
-
-#include <d3d12.h>
 #include <cstdint>
 
 class DXCommands
@@ -22,7 +20,7 @@ public:
 
 	ComPtr<ID3D12CommandQueue> GetCommandQueue();
 	ComPtr<ID3D12CommandList> GetCommandList();
-	ComPtr<ID3D12GraphicsCommandList2> GetGraphicsCommandList();
+	ComPtr<ID3D12GraphicsCommandList4> GetGraphicsCommandList();
 
 private:
 	void CreateCommandQueue(D3D12_COMMAND_LIST_TYPE type);
@@ -31,10 +29,10 @@ private:
 	void CreateSynchronizationObjects();
 
 private:
-	ComPtr<ID3D12Device2> device;
+	ComPtr<ID3D12Device5> device;
 
 	ComPtr<ID3D12CommandQueue> commandQueue;
-	ComPtr<ID3D12GraphicsCommandList2> commandList;
+	ComPtr<ID3D12GraphicsCommandList4> commandList;
 	ComPtr<ID3D12CommandAllocator> commandAllocators[Window::BackBufferCount];
 
 	// CPU-GPU Synchronization //

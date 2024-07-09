@@ -51,7 +51,6 @@ private:
 	std::vector<unsigned int> indices;
 	unsigned int indicesCount = 0;
 
-
 	bool hasTextures = false;
 
 	int materialCBVIndex = -1;
