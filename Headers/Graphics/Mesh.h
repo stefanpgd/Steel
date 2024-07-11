@@ -2,19 +2,16 @@
 
 #include <vector>
 #include <string>
-#include <d3d12.h>
-#include <d3dx12.h>
-#include <wrl.h>
-using namespace Microsoft::WRL;
 
+#include "Graphics/DXCommon.h"
 #include "Framework/Mathematics.h"
+
+#include <tiny_gltf.h>
 
 struct Vertex
 {
 	glm::vec3 Position;
 	glm::vec3 Normal;
-	glm::vec3 Tangent;
-	glm::vec3 Color;
 	glm::vec2 TexCoord;
 };
 
@@ -23,18 +20,23 @@ class Texture;
 class Mesh
 {
 public:
+	Mesh(tinygltf::Model& model, tinygltf::Primitive& primitive, glm::mat4& transform);
 	Mesh(Vertex* vertices, unsigned int vertexCount, unsigned int* indices, unsigned int indexCount);
 
+	ID3D12Resource* GetVertexBuffer();
+	ID3D12Resource* GetIndexBuffer();
 	const D3D12_VERTEX_BUFFER_VIEW& GetVertexBufferView();
 	const D3D12_INDEX_BUFFER_VIEW& GetIndexBufferView();
-	const CD3DX12_GPU_DESCRIPTOR_HANDLE GetMaterialView();
-	const unsigned int GetIndicesCount();
 
-	bool HasTextures();
-	unsigned int GetTextureID();
+	const unsigned int GetIndicesCount();
 
 private:
 	void UploadBuffers();
+
+	// TinyGLTF Loading //
+	void LoadAttribute(tinygltf::Model& model, tinygltf::Primitive& primitive, const std::string& attributeType);
+	void LoadIndices(tinygltf::Model& model, tinygltf::Primitive& primitive);
+	void ApplyNodeTransform(const glm::mat4 transform);
 
 public:
 	std::string Name;
@@ -49,10 +51,7 @@ private:
 
 	std::vector<Vertex> vertices;
 	std::vector<unsigned int> indices;
-	unsigned int indicesCount = 0;
 
-	bool hasTextures = false;
-
-	int materialCBVIndex = -1;
-	ComPtr<ID3D12Resource> materialBuffer;
+	unsigned int verticesCount;
+	unsigned int indicesCount;
 };
