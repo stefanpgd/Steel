@@ -1,6 +1,6 @@
-# HelloDX12Window
-This repository acts as a template project that is used for most of my projects as a starting grounds.
-It is by no means perfect, but it's a simple template to try out things with surrounding DirectX 12.
+# DX12-Core
+This repository acts as my DirectX 12 framework that is used for most of my projects as a starting grounds.
+It is by no means perfect, but it's a simple framework to try out things with surrounding DirectX 12.
 
 ### Contents:
 - A basic engine loop ( Start, Update, Render )
