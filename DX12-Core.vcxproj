@@ -114,11 +114,13 @@
     <ClCompile Include="Source\Framework\Renderer.cpp" />
     <ClCompile Include="Source\Framework\Application.cpp" />
     <ClCompile Include="Source\main.cpp" />
+    <ClCompile Include="Source\Graphics\TextureManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Headers\Framework\Editor.h" />
     <ClInclude Include="Headers\Graphics\DXCommon.h" />
     <ClInclude Include="Headers\Graphics\DXUploadBuffer.h" />
+    <ClInclude Include="Headers\Graphics\Extensions\Mesh_TinyglTF.h" />
     <ClInclude Include="Headers\Utilities\Random.h" />
     <ClInclude Include="Dependencies\ImGui\imconfig.h" />
     <ClInclude Include="Dependencies\ImGui\imgui.h" />
@@ -149,6 +151,7 @@
     <ClInclude Include="Headers\Graphics\RenderStage.h" />
     <ClInclude Include="Headers\Framework\Input.h" />
     <ClInclude Include="Headers\Graphics\Model.h" />
+    <ClInclude Include="Headers\Graphics\TextureManager.h" />
   </ItemGroup>
   <ItemGroup>
     <CopyFileToFolders Include="Dependencies\Microsoft\d3dcompiler_47.dll">

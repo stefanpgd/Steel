@@ -1,13 +1,16 @@
 #pragma once
 
 #include "Graphics/DXCommon.h"
+#include <string>
 
 class Texture
 {
 public:
 	Texture(int width, int height, DXGI_FORMAT format);
-	Texture(void* data, int width, int height,
+	Texture(void* data, int width, int height, 
 		DXGI_FORMAT format = DXGI_FORMAT_R8G8B8A8_UNORM, unsigned int formatSizeInBytes = 4);
+	Texture(const std::string& filePath); 
+
 	~Texture();
 
 	int GetWidth();

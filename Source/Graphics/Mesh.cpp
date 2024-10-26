@@ -150,7 +150,7 @@ void Mesh::LoadAttribute(tinygltf::Model& model, tinygltf::Primitive& primitive,
 		}
 		else if (attributeType == "TEXCOORD_0")
 		{
-			memcpy(&vertex.TexCoord, &buffer.data[bufferLocation], dataSize);
+			memcpy(&vertex.TextureCoord0, &buffer.data[bufferLocation], dataSize);
 		}
 		else if (attributeType == "NORMAL")
 		{

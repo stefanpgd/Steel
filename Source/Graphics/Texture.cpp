@@ -18,6 +18,29 @@ Texture::Texture(void* data, int width, int height, DXGI_FORMAT format, unsigned
 	CreateDescriptors();
 }
 
+Texture::Texture(const std::string& filePath)
+{
+	int width;
+	int height;
+	int channels;
+	unsigned char* buffer = stbi_load(filePath.c_str(), &width, &height, &channels, 4);
+
+	this->width = width;
+	this->height = height;
+	this->format = DXGI_FORMAT_R8G8B8A8_UNORM;
+	formatSizeInBytes = 4;
+
+	if(buffer == NULL)
+	{
+		LOG(Log::MessageType::Error, "Unsuccesful with loading: " + filePath);
+		assert(false);
+	}
+
+	UploadData(buffer);
+	CreateDescriptors();
+	stbi_image_free(buffer);
+}
+
 Texture::~Texture()
 {
 	textureResource.Reset();
@@ -77,7 +100,7 @@ void Texture::AllocateTexture()
 
 	CD3DX12_HEAP_PROPERTIES defaultHeap = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT);
 	DXAccess::GetDevice()->CreateCommittedResource(&defaultHeap, D3D12_HEAP_FLAG_NONE, &textureDescription,
-		 D3D12_RESOURCE_STATE_COPY_SOURCE, nullptr, IID_PPV_ARGS(&textureResource));
+		D3D12_RESOURCE_STATE_COPY_SOURCE, nullptr, IID_PPV_ARGS(&textureResource));
 }
 
 DXGI_FORMAT Texture::GetFormat()
