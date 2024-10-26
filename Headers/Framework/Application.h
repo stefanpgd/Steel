@@ -26,7 +26,7 @@ private:
 	static LRESULT CALLBACK WindowsCallback(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
 
 private:
-	std::wstring applicationName = L"Flux";
+	std::wstring applicationName = L"Insert Application Name";
 	bool runApplication = true;
 
 	unsigned int windowWidth = 1080;
