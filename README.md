@@ -1,4 +1,4 @@
-# The Steel Framework
+# Steel - A DirectX 12 Framework
 This is my personal framework build with DirectX 12 which is used for my personal projects.
 Steel gets continously iterated with each project, since I usually find the need for new systems with different projects.
 
