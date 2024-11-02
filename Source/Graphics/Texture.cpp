@@ -20,6 +20,7 @@ Texture::Texture(void* data, int width, int height, DXGI_FORMAT format, unsigned
 
 Texture::Texture(const std::string& filePath)
 {
+	// TODO: Probably add a direct way to access the texture manager here..
 	int width;
 	int height;
 	int channels;
