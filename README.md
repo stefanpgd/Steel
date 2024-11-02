@@ -1,6 +1,6 @@
-# DX12-Core
-This repository acts as my DirectX 12 framework that is used for most of my projects as a starting grounds.
-It is by no means perfect, but it's a simple framework to try out things with surrounding DirectX 12.
+# The Steel Framework
+This is my personal framework build with DirectX 12 which is used for my personal projects.
+Steel gets continously iterated with each project, since I usually find the need for new systems with different projects.
 
 ### Contents:
 - A basic engine loop ( Start, Update, Render )
