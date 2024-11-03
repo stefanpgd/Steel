@@ -14,6 +14,9 @@
 #include <imgui_impl_dx12.h>
 #include <imgui_impl_win32.h>
 
+// Projects //
+#include "Projects/HelloCompute/HelloComputeProject.h"
+
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
 namespace EngineInternal
@@ -28,6 +31,8 @@ Engine::Engine()
 
 	renderer = new Renderer(frameworkName, windowWidth, windowHeight);
 	editor = new Editor();
+
+	InitializeProjects();
 
 	LOG("Successfully initialized Steel!");
 }
@@ -76,8 +81,8 @@ void Engine::Start()
 void Engine::Update(float deltaTime)
 {
 	Input::Update();
-
 	editor->Update(deltaTime);
+	activeProject->Update(deltaTime);
 
 	if(Input::GetKeyDown(KeyCode::Escape))
 	{
@@ -88,7 +93,14 @@ void Engine::Update(float deltaTime)
 void Engine::Render()
 {
 	ImGui::Render();
-	renderer->Render();
+	renderer->Render(activeProject);
+}
+
+void Engine::InitializeProjects()
+{
+	// TODO: rn a bit convoluted, but in the future we likely initialize multiple projects?
+	// Maybe consider adding a "project" picker if it becomes relevant
+	activeProject = new HelloComputeProject();
 }
 
 void Engine::RegisterWindowClass()
@@ -128,6 +140,5 @@ LRESULT Engine::WindowsCallback(HWND hwnd, UINT message, WPARAM wParam, LPARAM l
 
 	// ImGui Windows callback //
 	ImGui_ImplWin32_WndProcHandler(hwnd, message, wParam, lParam);
-
 	return ::DefWindowProcW(hwnd, message, wParam, lParam);
 }

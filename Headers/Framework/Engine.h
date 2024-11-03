@@ -7,8 +7,8 @@
 
 class Renderer;
 class Editor;
+class Project;
 
-// When using the template, rename 'Application' to whatever the current project is called 
 class Engine
 {
 public:
@@ -17,12 +17,14 @@ public:
 	void Run();
 
 private:
-	void RegisterWindowClass();
-
 	void Start();
 	void Update(float deltaTime);
 	void Render();
 
+	void InitializeProjects();
+
+	// Windows API //
+	void RegisterWindowClass();
 	static LRESULT CALLBACK WindowsCallback(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
 
 private:
@@ -37,4 +39,5 @@ private:
 	// Systems //
 	Renderer* renderer;
 	Editor* editor;
+	Project* activeProject;
 };

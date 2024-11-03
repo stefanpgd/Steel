@@ -1,4 +1,5 @@
 #include "Framework/Renderer.h"
+#include "Framework/Project.h"
 
 // DirectX Components //
 #include "Graphics/DXAccess.h"
@@ -50,7 +51,7 @@ Renderer::Renderer(const std::wstring& applicationName, unsigned int windowWidth
 	InitializeImGui();
 }
 
-void Renderer::Render()
+void Renderer::Render(Project* project)
 {
 	unsigned int backBufferIndex = window->GetCurrentBackBufferIndex();
 	ComPtr<ID3D12GraphicsCommandList4> commandList = directCommands->GetGraphicsCommandList();
@@ -68,7 +69,7 @@ void Renderer::Render()
 	TransitionResource(renderTargetBuffer.Get(), D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET);
 	BindAndClearRenderTarget(window, &rtvHandle, &dsvHandle);
 
-	// Insert new rendering code here //
+	project->Render(commandList);
 
 	ImGui_ImplDX12_RenderDrawData(ImGui::GetDrawData(), commandList.Get());
 	TransitionResource(renderTargetBuffer.Get(), D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT);
