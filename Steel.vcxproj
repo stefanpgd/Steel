@@ -86,6 +86,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Source\Projects\HelloCompute\ComputeUVStage.cpp" />
     <ClCompile Include="Dependencies\tinyglTF\tiny_gltf.cpp" />
     <ClCompile Include="Source\Projects\HelloCompute\HelloComputeProject.cpp" />
     <ClCompile Include="Source\Graphics\Model.cpp" />
@@ -118,6 +119,8 @@
     <ClCompile Include="Source\Graphics\TextureManager.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Headers\Graphics\DXComponents.h" />
+    <ClInclude Include="Headers\Projects\HelloCompute\ComputeUVStage.h" />
     <ClInclude Include="Headers\Framework\Editor.h" />
     <ClInclude Include="Headers\Graphics\DXCommon.h" />
     <ClInclude Include="Headers\Graphics\DXUploadBuffer.h" />
@@ -163,6 +166,12 @@
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Source\Shaders\bufferClear.compute.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Compute</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.1</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Compute</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.1</ShaderModel>
+    </FxCompile>
+    <FxCompile Include="Source\Shaders\computeUV.compute.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Compute</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.1</ShaderModel>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Compute</ShaderType>

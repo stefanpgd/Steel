@@ -122,7 +122,7 @@ ComPtr<ID3D12Resource> Texture::GetResource()
 void Texture::UploadData(void* data)
 {
 	D3D12_RESOURCE_DESC description = CD3DX12_RESOURCE_DESC::Tex2D(
-		format, width, height);
+		format, width, height, 1, 1);
 	description.Flags = D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET | D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS;
 
 	D3D12_SUBRESOURCE_DATA subresource;

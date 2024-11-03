@@ -12,5 +12,6 @@ void main(uint3 dispatchThreadID : SV_DispatchThreadID)
         return;
     }
     
-    targetTexture[dispatchThreadID.xy] = float4(0.0f, 0.0f, 0.0f, 1.0f);
+    float2 uv = float2(dispatchThreadID.xy) / float2(width, height);
+    targetTexture[dispatchThreadID.xy] = float4(uv, 0.0f, 1.0f);
 }
