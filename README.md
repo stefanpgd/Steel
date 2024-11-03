@@ -8,6 +8,13 @@ Steel gets continously iterated with each project, since I usually find the need
 - Framework classes like `Input` or `Mathematics`
 - Model loading support for glTF files
 
-### Example/Reference Project(s)
+### 📚 Example/Reference Project(s)
+These are example projects to use as reference, or to quickly build off from for the next project:
 - (WIP) Tiny Hybrid, a simple setup of rasterization with Ray Traced shadows
 - Hello Compute, a setup of a compute pipeline outputting UV coordinates to the screen
+
+### ✍️ Work
+These are different project(s) that I've made using Steel. 
+- [Blaze - DXR Path Tracer](https://github.com/stefanpgd/Blaze)
+- [Flux - Particle Simulations](https://github.com/stefanpgd/Flux)
+- [Nova - PBR Renderer](https://github.com/stefanpgd/Nova)
