@@ -2,12 +2,10 @@
 
 #include <array>
 
-class Application;
-
 class Editor
 {
 public:
-	Editor(Application* application);
+	Editor();
 
 	void Update(float deltaTime);
 
@@ -21,6 +19,4 @@ private:
 
 	struct ImFont* baseFont;
 	struct ImFont* boldFont;
-
-	Application* application;
 };

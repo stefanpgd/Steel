@@ -1,9 +1,9 @@
-#include "Framework/Application.h"
+#include "Framework/Engine.h"
 
 int main()
 {
-	Application app;
-	app.Run();
+	Engine steel;
+	steel.Run();
 
 	return 0;
 }

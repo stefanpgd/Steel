@@ -1,4 +1,4 @@
-#include "Framework/Application.h"
+#include "Framework/Engine.h"
 #include "Framework/Renderer.h"
 #include "Framework/Editor.h"
 #include "Framework/Input.h"
@@ -22,24 +22,24 @@ namespace EngineInternal
 }
 using namespace EngineInternal;
 
-Application::Application()
+Engine::Engine()
 {
 	RegisterWindowClass();
 
-	renderer = new Renderer(applicationName, windowWidth, windowHeight);
-	editor = new Editor(this);
+	renderer = new Renderer(frameworkName, windowWidth, windowHeight);
+	editor = new Editor();
 
-	LOG("Successfully initialized - 'Insert Application Name'");
+	LOG("Successfully initialized Steel!");
 }
 
-void Application::Run()
+void Engine::Run()
 {
 	std::chrono::high_resolution_clock* clock = new std::chrono::high_resolution_clock();
 	auto t0 = std::chrono::time_point_cast<std::chrono::milliseconds>((clock->now())).time_since_epoch();;
 	float deltaTime = 1.0f;
 
 	MSG msg = {};
-	while(runApplication && msg.message != WM_QUIT)
+	while(runEngine && msg.message != WM_QUIT)
 	{
 		// DeltaTime //
 		auto t1 = std::chrono::time_point_cast<std::chrono::milliseconds>((clock->now())).time_since_epoch();
@@ -60,7 +60,7 @@ void Application::Run()
 	}
 }
 
-void Application::Start()
+void Engine::Start()
 {
 	if(doResize)
 	{
@@ -73,7 +73,7 @@ void Application::Start()
 	ImGui::NewFrame();
 }
 
-void Application::Update(float deltaTime)
+void Engine::Update(float deltaTime)
 {
 	Input::Update();
 
@@ -81,17 +81,17 @@ void Application::Update(float deltaTime)
 
 	if(Input::GetKeyDown(KeyCode::Escape))
 	{
-		runApplication = false;
+		runEngine = false;
 	}
 }
 
-void Application::Render()
+void Engine::Render()
 {
 	ImGui::Render();
 	renderer->Render();
 }
 
-void Application::RegisterWindowClass()
+void Engine::RegisterWindowClass()
 {
 	WNDCLASSEXW windowClassDescription = {};
 	HINSTANCE hInstance = GetModuleHandle(NULL);
@@ -106,14 +106,14 @@ void Application::RegisterWindowClass()
 	windowClassDescription.hCursor = ::LoadCursor(NULL, IDC_ARROW);
 	windowClassDescription.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
 	windowClassDescription.lpszMenuName = NULL;
-	windowClassDescription.lpszClassName = applicationName.c_str();
+	windowClassDescription.lpszClassName = frameworkName.c_str();
 	windowClassDescription.hIconSm = ::LoadIcon(hInstance, NULL);
 
 	static ATOM atom = ::RegisterClassExW(&windowClassDescription);
 	assert(atom > 0);
 }
 
-LRESULT Application::WindowsCallback(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
+LRESULT Engine::WindowsCallback(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	switch(message)
 	{

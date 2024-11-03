@@ -87,6 +87,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Dependencies\tinyglTF\tiny_gltf.cpp" />
+    <ClCompile Include="Project.cpp" />
     <ClCompile Include="Source\Graphics\Model.cpp" />
     <ClCompile Include="Source\Framework\Input.cpp" />
     <ClCompile Include="Source\Framework\Editor.cpp" />
@@ -112,7 +113,7 @@
     <ClCompile Include="Source\Graphics\Transform.cpp" />
     <ClCompile Include="Source\Graphics\Window.cpp" />
     <ClCompile Include="Source\Framework\Renderer.cpp" />
-    <ClCompile Include="Source\Framework\Application.cpp" />
+    <ClCompile Include="Source\Framework\Engine.cpp" />
     <ClCompile Include="Source\main.cpp" />
     <ClCompile Include="Source\Graphics\TextureManager.cpp" />
   </ItemGroup>
@@ -132,7 +133,7 @@
     <ClInclude Include="Dependencies\ImGui\imstb_truetype.h" />
     <ClInclude Include="Headers\Graphics\DXStructuredBuffer.h" />
     <ClInclude Include="Headers\Graphics\DXComputePipeline.h" />
-    <ClInclude Include="Headers\Framework\Application.h" />
+    <ClInclude Include="Headers\Framework\Engine.h" />
     <ClInclude Include="Headers\Graphics\DepthBuffer.h" />
     <ClInclude Include="Headers\Graphics\DXAccess.h" />
     <ClInclude Include="Headers\Graphics\DXCommands.h" />
@@ -152,6 +153,7 @@
     <ClInclude Include="Headers\Framework\Input.h" />
     <ClInclude Include="Headers\Graphics\Model.h" />
     <ClInclude Include="Headers\Graphics\TextureManager.h" />
+    <ClInclude Include="Project.h" />
   </ItemGroup>
   <ItemGroup>
     <CopyFileToFolders Include="Dependencies\Microsoft\d3dcompiler_47.dll">

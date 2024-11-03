@@ -9,10 +9,10 @@ class Renderer;
 class Editor;
 
 // When using the template, rename 'Application' to whatever the current project is called 
-class Application
+class Engine
 {
 public:
-	Application();
+	Engine();
 
 	void Run();
 
@@ -26,8 +26,10 @@ private:
 	static LRESULT CALLBACK WindowsCallback(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
 
 private:
-	std::wstring applicationName = L"Insert Application Name";
-	bool runApplication = true;
+	// TODO: Add reference to active project
+
+	std::wstring frameworkName = L"Steel";
+	bool runEngine = true;
 
 	unsigned int windowWidth = 1080;
 	unsigned int windowHeight = 720;
