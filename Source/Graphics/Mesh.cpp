@@ -1,66 +1,68 @@
 #include "Graphics/Mesh.h"
 #include "Graphics/DXAccess.h"
 #include "Graphics/DXUtilities.h"
+#include "Graphics/DXR/DXRayTracingUtilities.h"
 #include "Graphics/DXUploadBuffer.h"
 #include "Graphics/Texture.h"
 #include "Graphics/DXCommands.h"
 #include "Framework/Mathematics.h"
 #include <cassert>
 
-Mesh::Mesh(tinygltf::Model& model, tinygltf::Primitive& primitive, glm::mat4& transform)
+#include "Graphics/Extensions/Mesh_TinyglTF.h"
+
+Mesh::Mesh(tinygltf::Model& model, tinygltf::Primitive& primitive, glm::mat4& transform, bool isRayTracingGeometry) 
+	: isRayTracingGeometry(isRayTracingGeometry)
 {
-	LoadAttribute(model, primitive, "POSITION");
-	LoadAttribute(model, primitive, "TEXCOORD_0");
-	LoadAttribute(model, primitive, "NORMAL");
+	// Geometry Data //
+	glTFLoadVertexAttribute(vertices, "POSITION", model, primitive);
+	glTFLoadVertexAttribute(vertices, "NORMAL", model, primitive);
+	glTFLoadVertexAttribute(vertices, "TANGENT", model, primitive);
+	glTFLoadVertexAttribute(vertices, "TEXCOORD_0", model, primitive);
+	glTFLoadIndices(indices, model, primitive);
 
-	LoadIndices(model, primitive);
+	GenerateTangents();
+	glTFApplyNodeTransform(vertices, transform);
 
-	ApplyNodeTransform(transform);
+	UploadGeometryBuffers();
 
-	UploadBuffers();
+	if(isRayTracingGeometry)
+	{
+		SetupGeometryDescription();
+		BuildBLAS();
+	}
+
+	// Material & Texture Data //
+	materialBuffer = new DXUploadBuffer(&Material, sizeof(Material));
 }
 
-Mesh::Mesh(Vertex* verts, unsigned int vertexCount, unsigned int* indi, unsigned int indexCount)
+Mesh::Mesh(Vertex* verts, unsigned int vertexCount, unsigned int* indi,
+	unsigned int indexCount, bool isRayTracingGeometry) : isRayTracingGeometry(isRayTracingGeometry)
 {
-	for (int i = 0; i < vertexCount; i++)
+	for(int i = 0; i < vertexCount; i++)
 	{
 		vertices.push_back(verts[i]);
 	}
 
-	for (int i = 0; i < indexCount; i++)
+	for(int i = 0; i < indexCount; i++)
 	{
 		indices.push_back(indi[i]);
 	}
 
-	UploadBuffers();
+	UploadGeometryBuffers();
+
+	if(isRayTracingGeometry)
+	{
+		SetupGeometryDescription();
+		BuildBLAS();
+	}
 }
 
-const D3D12_VERTEX_BUFFER_VIEW& Mesh::GetVertexBufferView()
+void Mesh::UpdateMaterial()
 {
-	return vertexBufferView;
+	materialBuffer->UpdateData(&Material);
 }
 
-const D3D12_INDEX_BUFFER_VIEW& Mesh::GetIndexBufferView()
-{
-	return indexBufferView;
-}
-
-const unsigned int Mesh::GetIndicesCount()
-{
-	return indicesCount;
-}
-
-ID3D12Resource* Mesh::GetVertexBuffer()
-{
-	return vertexBuffer.Get();
-}
-
-ID3D12Resource* Mesh::GetIndexBuffer()
-{
-	return indexBuffer.Get();
-}
-
-void Mesh::UploadBuffers()
+void Mesh::UploadGeometryBuffers()
 {
 	DXCommands* copyCommands = DXAccess::GetCommands(D3D12_COMMAND_LIST_TYPE_COPY);
 	ComPtr<ID3D12GraphicsCommandList4> copyCommandList = copyCommands->GetGraphicsCommandList();
@@ -97,109 +99,127 @@ void Mesh::UploadBuffers()
 	indices.clear();
 }
 
-#pragma region TinyGLTF Loading
-void Mesh::LoadAttribute(tinygltf::Model& model, tinygltf::Primitive& primitive, const std::string& attributeType)
+void Mesh::SetupGeometryDescription()
 {
-	auto attribute = primitive.attributes.find(attributeType);
+	ComPtr<ID3D12Device5> device = DXAccess::GetDevice();
+	geometryDescription.Flags = D3D12_RAYTRACING_GEOMETRY_FLAG_OPAQUE;
+	geometryDescription.Type = D3D12_RAYTRACING_GEOMETRY_TYPE_TRIANGLES;
+	geometryDescription.Triangles.Transform3x4 = 0;
 
-	// Check if within the primitives's attributes the type is present. For example 'Normals'
-	// If not, stop here, the model isn't valid
-	if (attribute == primitive.attributes.end())
+	// Vertex Buffer //
+	geometryDescription.Triangles.VertexBuffer.StartAddress = vertexBuffer->GetGPUVirtualAddress();
+	geometryDescription.Triangles.VertexBuffer.StrideInBytes = sizeof(Vertex);
+	geometryDescription.Triangles.VertexFormat = DXGI_FORMAT_R32G32B32_FLOAT;
+	geometryDescription.Triangles.VertexCount = verticesCount;
+
+	// Index Buffer //
+	geometryDescription.Triangles.IndexBuffer = indexBuffer->GetGPUVirtualAddress();
+	geometryDescription.Triangles.IndexFormat = DXGI_FORMAT_R32_UINT;
+	geometryDescription.Triangles.IndexCount = indicesCount;
+}
+
+void Mesh::BuildBLAS()
+{
+	D3D12_BUILD_RAYTRACING_ACCELERATION_STRUCTURE_INPUTS inputs = {};
+	inputs.Type = D3D12_RAYTRACING_ACCELERATION_STRUCTURE_TYPE_BOTTOM_LEVEL;
+	inputs.DescsLayout = D3D12_ELEMENTS_LAYOUT_ARRAY;
+
+	inputs.pGeometryDescs = &geometryDescription;
+	inputs.NumDescs = 1;
+	inputs.Flags = D3D12_RAYTRACING_ACCELERATION_STRUCTURE_BUILD_FLAG_PREFER_FAST_TRACE; // there are also other options like 'Fast Build'
+
+	AllocateAccelerationStructureMemory(inputs, blasScratch.GetAddressOf(), blasResult.GetAddressOf());
+	BuildAccelerationStructure(inputs, blasScratch, blasResult);
+}
+
+void Mesh::GenerateTangents()
+{
+	Vertex& vertex = vertices[0];
+
+	// Incase the vertex doesn't have the default value of a zero-vector
+	// it means that the Tangent attribute was present for the model
+	// if not, we need to generate them.
+	if(vertex.Tangent != glm::vec3(0.0f))
 	{
-		std::string message = "Attribute Type: '" + attributeType + "' missing from model.";
-		LOG(Log::MessageType::Debug, message);
 		return;
 	}
 
-	// Accessor: Tells use which view we need, what type of data is in it, and the amount/count of data.
-	// BufferView: Tells which buffer we need, and where we need to be in the buffer
-	// Buffer: Binary data of our mesh
-	tinygltf::Accessor& accessor = model.accessors[primitive.attributes.at(attributeType)];
-	tinygltf::BufferView& view = model.bufferViews[accessor.bufferView];
-	tinygltf::Buffer& buffer = model.buffers[view.buffer];
-
-	// Component: default type like float, int
-	// Type: a structure made out of components, e.g VEC2 ( 2x float )
-	unsigned int componentSize = tinygltf::GetComponentSizeInBytes(accessor.componentType);
-	unsigned int objectSize = tinygltf::GetNumComponentsInType(accessor.type);
-	unsigned int dataSize = componentSize * objectSize;
-
-	// Accessor byteoffset: Offset to first element of type
-	// BufferView byteoffset: Offset to get to this primitives buffer data in the overall buffer
-	unsigned int bufferStart = accessor.byteOffset + view.byteOffset;
-
-	// Stride: Distance in buffer till next elelemt occurs
-	unsigned int stride = accessor.ByteStride(view);
-
-	// In case it hasn't happened, resize the vertex buffer since we're 
-	// going to directly memcpy the data into an already existing buffer
-	if (vertices.size() < accessor.count)
+	// Grab the average tangent of all triangles in the model //
+	for(unsigned int i = 0; i < indices.size(); i += 3)
 	{
-		vertices.resize(accessor.count);
-	}
+		Vertex& v0 = vertices[indices[i]];
+		Vertex& v1 = vertices[indices[i + 1]];
+		Vertex& v2 = vertices[indices[i + 2]];
 
-	for (int i = 0; i < accessor.count; i++)
-	{
-		Vertex& vertex = vertices[i];
-		size_t bufferLocation = bufferStart + (i * stride);
+		glm::vec3 tangent;
 
-		// TODO: Add 'offsetto' to this and use pointers to vertices instead of a reference
-		if (attributeType == "POSITION")
-		{
-			memcpy(&vertex.Position, &buffer.data[bufferLocation], dataSize);
-		}
-		else if (attributeType == "TEXCOORD_0")
-		{
-			memcpy(&vertex.TextureCoord0, &buffer.data[bufferLocation], dataSize);
-		}
-		else if (attributeType == "NORMAL")
-		{
-			memcpy(&vertex.Normal, &buffer.data[bufferLocation], dataSize);
-		}
+		// Edges of triangles //
+		glm::vec3 edge1 = v1.Position - v0.Position;
+		glm::vec3 edge2 = v2.Position - v0.Position;
+
+		// UV deltas //
+		glm::vec2 deltaUV1 = v1.TextureCoord0 - v0.TextureCoord0;
+		glm::vec2 deltaUV2 = v2.TextureCoord0 - v0.TextureCoord0;
+
+		float f = 1.0f / (deltaUV1.x * deltaUV2.y - deltaUV2.x * deltaUV1.y);
+		tangent = (edge1 * deltaUV2.y - edge2 * deltaUV1.y) * f;
+
+		v0.Tangent += tangent;
+		v1.Tangent += tangent;
+		v2.Tangent += tangent;
+
+		v0.Tangent = glm::normalize(v0.Tangent);
+		v1.Tangent = glm::normalize(v1.Tangent);
+		v2.Tangent = glm::normalize(v2.Tangent);
 	}
 }
+#pragma endregion
 
-void Mesh::LoadIndices(tinygltf::Model& model, tinygltf::Primitive& primitive)
+#pragma region Getters
+const D3D12_VERTEX_BUFFER_VIEW& Mesh::GetVertexBufferView()
 {
-	tinygltf::Accessor& accessor = model.accessors[primitive.indices];
-	tinygltf::BufferView& view = model.bufferViews[accessor.bufferView];
-	tinygltf::Buffer& buffer = model.buffers[view.buffer];
-
-	unsigned int componentSize = tinygltf::GetComponentSizeInBytes(accessor.componentType);
-	unsigned int objectSize = tinygltf::GetNumComponentsInType(accessor.type);
-	unsigned int dataSize = componentSize * objectSize;
-
-	unsigned int bufferStart = accessor.byteOffset + view.byteOffset;
-	unsigned int stride = accessor.ByteStride(view);
-
-	for (int i = 0; i < accessor.count; i++)
-	{
-		size_t bufferLocation = bufferStart + (i * stride);
-
-		if (componentSize == 2)
-		{
-			short index;
-			memcpy(&index, &buffer.data[bufferLocation], dataSize);
-			indices.push_back(index);
-		}
-		else if (componentSize == 4)
-		{
-			unsigned int index;
-			memcpy(&index, &buffer.data[bufferLocation], dataSize);
-			indices.push_back(index);
-		}
-	}
+	return vertexBufferView;
 }
 
-void Mesh::ApplyNodeTransform(const glm::mat4 transform)
+const D3D12_INDEX_BUFFER_VIEW& Mesh::GetIndexBufferView()
 {
-	for (Vertex& vertex : vertices)
-	{
-		glm::vec4 vert = glm::vec4(vertex.Position.x, vertex.Position.y, vertex.Position.z, 1.0f);
-		vertex.Position = transform * vert;
+	return indexBufferView;
+}
 
-		glm::vec4 norm = glm::vec4(vertex.Normal.x, vertex.Normal.y, vertex.Normal.z, 0.0f);
-		vertex.Normal = glm::normalize(transform * norm);
+const unsigned int Mesh::GetIndicesCount()
+{
+	return indicesCount;
+}
+
+ID3D12Resource* Mesh::GetVertexBuffer()
+{
+	return vertexBuffer.Get();
+}
+
+ID3D12Resource* Mesh::GetIndexBuffer()
+{
+	return indexBuffer.Get();
+}
+
+D3D12_GPU_VIRTUAL_ADDRESS Mesh::GetMaterialGPUAddress()
+{
+	return materialBuffer->GetGPUVirtualAddress();
+}
+
+D3D12_RAYTRACING_GEOMETRY_DESC Mesh::GetGeometryDescription()
+{
+	if(isRayTracingGeometry)
+	{
+		return geometryDescription;
 	}
+
+	LOG(Log::MessageType::Error, "Object was NOT marked as Ray Tracing Geometry")
+	assert(false);
+	return D3D12_RAYTRACING_GEOMETRY_DESC();
+}
+
+ID3D12Resource* Mesh::GetBLAS()
+{
+	return blasResult.Get();
 }
 #pragma endregion

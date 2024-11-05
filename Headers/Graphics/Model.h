@@ -5,18 +5,19 @@
 #include <tiny_gltf.h>
 
 #include "Graphics/Transform.h"
-#include "Graphics/DXCommon.h"
+#include <wrl.h>
+#include <d3d12.h>
+using namespace Microsoft::WRL;
 
 class Mesh;
 struct Vertex;
 
 class Model
 {
-	// Model through TinyglTF, so glTF files are expected
-	Model(const std::string& filePath);
-
-	// Model through pre-loaded/generated buffer
-	Model(Vertex* vertices, unsigned int vertexCount, unsigned int* indices, unsigned int indexCount);
+public:
+	Model(const std::string& filePath, bool isRayTracingGeometry = false);
+	Model(Vertex* vertices, unsigned int vertexCount, unsigned int* indices,
+		unsigned int indexCount, bool isRayTracingGeometry = false);
 
 	Mesh* GetMesh(int index);
 	const std::vector<Mesh*>& GetMeshes();
@@ -29,9 +30,10 @@ private:
 	glm::mat4 GetTransformFromNode(tinygltf::Node& node);
 
 public:
-	Transform Transform;
+	Transform transform;
 	std::string Name;
 
 private:
 	std::vector<Mesh*> meshes;
+	bool isRayTracingGeometry;
 };

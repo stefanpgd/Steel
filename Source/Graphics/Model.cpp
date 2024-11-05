@@ -1,10 +1,11 @@
 #include "Graphics/Model.h"
 #include "Graphics/Mesh.h"
+#include "Graphics/DXR/DXRayTracingUtilities.h"
 #include "Graphics/DXUploadBuffer.h"
 
 #include "Utilities/Logger.h"
 
-Model::Model(const std::string& filePath)
+Model::Model(const std::string& filePath, bool isRayTracingGeometry) : isRayTracingGeometry(isRayTracingGeometry)
 {
 	Name = filePath.substr(filePath.find_last_of('\\') + 1);
 
@@ -14,17 +15,17 @@ Model::Model(const std::string& filePath)
 	std::string warning;
 
 	bool result = loader.LoadASCIIFromFile(&model, &error, &warning, filePath);
-	if (!warning.empty())
+	if(!warning.empty())
 	{
 		LOG(Log::MessageType::Debug, warning);
 	}
 
-	if (!error.empty())
+	if(!error.empty())
 	{
 		LOG(Log::MessageType::Error, error);
 	}
 
-	if (!result)
+	if(!result)
 	{
 		assert(false && "Failed to parse model.");
 	}
@@ -32,9 +33,10 @@ Model::Model(const std::string& filePath)
 	TraverseRootNodes(model);
 }
 
-Model::Model(Vertex* vertices, unsigned int vertexCount, unsigned int* indices, unsigned int indexCount)
+Model::Model(Vertex* vertices, unsigned int vertexCount, unsigned int* indices, unsigned int indexCount, 
+	bool isRayTracingGeometry) : isRayTracingGeometry(isRayTracingGeometry)
 {
-	Mesh* mesh = new Mesh(vertices, vertexCount, indices, indexCount);
+	Mesh* mesh = new Mesh(vertices, vertexCount, indices, indexCount, isRayTracingGeometry);
 	meshes.push_back(mesh);
 }
 
@@ -59,14 +61,14 @@ void Model::TraverseRootNodes(tinygltf::Model& model)
 	glm::mat4 transform;
 
 	// Traverse the 'root' nodes from the scene
-	for (int i = 0; i < scene.nodes.size(); i++)
+	for(int i = 0; i < scene.nodes.size(); i++)
 	{
 		tinygltf::Node& rootNode = model.nodes[scene.nodes[i]];
 
-		if (rootNode.matrix.size() > 0)
+		if(rootNode.matrix.size() > 0)
 		{
 			std::vector<float> matrix;
-			for (int j = 0; j < 16; j++)
+			for(int j = 0; j < 16; j++)
 			{
 				matrix.push_back(static_cast<float>(rootNode.matrix[j]));
 			}
@@ -78,20 +80,20 @@ void Model::TraverseRootNodes(tinygltf::Model& model)
 			transform = GetTransformFromNode(rootNode);
 		}
 
-		if (rootNode.mesh != -1)
+		if(rootNode.mesh != -1)
 		{
 			tinygltf::Mesh& mesh = model.meshes[rootNode.mesh];
 
-			for (tinygltf::Primitive& primitive : mesh.primitives)
+			for(tinygltf::Primitive& primitive : mesh.primitives)
 			{
-				Mesh* m = new Mesh(model, primitive, transform);
+				Mesh* m = new Mesh(model, primitive, transform, isRayTracingGeometry);
 				m->Name = mesh.name;
 				meshes.push_back(m);
 			}
 		}
 
 		// Process Child Nodes //
-		for (int noteID : rootNode.children)
+		for(int noteID : rootNode.children)
 		{
 			TraverseChildNodes(model, model.nodes[noteID], transform);
 		}
@@ -103,10 +105,10 @@ void Model::TraverseChildNodes(tinygltf::Model& model, tinygltf::Node& node, con
 	glm::mat4 transform;
 
 	// 1. Load matrix from node //
-	if (node.matrix.size() > 0)
+	if(node.matrix.size() > 0)
 	{
 		std::vector<float> matrix;
-		for (int i = 0; i < 16; i++)
+		for(int i = 0; i < 16; i++)
 		{
 			matrix.push_back(static_cast<float>(node.matrix[i]));
 		}
@@ -124,20 +126,20 @@ void Model::TraverseChildNodes(tinygltf::Model& model, tinygltf::Node& node, con
 	glm::mat4 childNodeTransform = parentMatrix * transform;
 
 	// 2. Apply to meshes in note //
-	if (node.mesh != -1)
+	if(node.mesh != -1)
 	{
 		tinygltf::Mesh& mesh = model.meshes[node.mesh];
 
-		for (tinygltf::Primitive& primitive : mesh.primitives)
+		for(tinygltf::Primitive& primitive : mesh.primitives)
 		{
-			Mesh* m = new Mesh(model, primitive, childNodeTransform);
+			Mesh* m = new Mesh(model, primitive, childNodeTransform, isRayTracingGeometry);
 			m->Name = mesh.name;
 			meshes.push_back(m);
 		}
 	}
 
 	// 3. Loop for children // 
-	for (int noteID : node.children)
+	for(int noteID : node.children)
 	{
 		TraverseChildNodes(model, model.nodes[noteID], childNodeTransform);
 	}
@@ -149,14 +151,14 @@ glm::mat4 Model::GetTransformFromNode(tinygltf::Node& node)
 
 	// The size of any type of transformation data defaults to 0.
 	// When a vector isn't 0, it means it contains data
-	if (node.translation.size() > 0)
+	if(node.translation.size() > 0)
 	{
 		transform.Position.x = node.translation[0];
 		transform.Position.y = node.translation[1];
 		transform.Position.z = node.translation[2];
 	}
 
-	if (node.rotation.size() > 0)
+	if(node.rotation.size() > 0)
 	{
 		glm::quat rotation;
 		rotation.x = node.rotation[0];
@@ -168,7 +170,7 @@ glm::mat4 Model::GetTransformFromNode(tinygltf::Node& node)
 		transform.Rotation = euler;
 	}
 
-	if (node.scale.size() > 0)
+	if(node.scale.size() > 0)
 	{
 		transform.Scale.x = node.scale[0];
 		transform.Scale.y = node.scale[1];

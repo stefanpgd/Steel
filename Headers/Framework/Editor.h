@@ -2,6 +2,9 @@
 
 #include <array>
 
+/// <summary>
+/// Takes care of some of the default UI present in the project, such as the menu bar. 
+/// </summary>
 class Editor
 {
 public:
