@@ -11,3 +11,12 @@ struct Material
 	float color[3] = { 1.0f, 1.0f, 1.0f };
 	float stubs[61];
 };
+
+class Texture;
+struct PBRTextureSet
+{
+	Texture* Albedo = nullptr;
+	Texture* Normal = nullptr;
+	Texture* RoughnessMetallic = nullptr;
+	Texture* AmbientOcclusion = nullptr;
+};

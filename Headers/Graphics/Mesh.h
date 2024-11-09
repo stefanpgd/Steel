@@ -47,11 +47,14 @@ private:
 	void GenerateTangents();
 	void UploadGeometryBuffers();
 	void SetupGeometryDescription();
+	void LoadTextures(tinygltf::Model& model, tinygltf::Primitive& primitive);
+
 	void BuildBLAS();
 
 public:
 	std::string Name;
 	Material Material;
+	PBRTextureSet Textures;
 
 private:
 	// Vertex & Index Data //

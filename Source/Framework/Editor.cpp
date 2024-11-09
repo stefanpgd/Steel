@@ -3,6 +3,8 @@
 #include <imgui.h>
 #include <string>
 
+// TODO: Add the functionality to render a drop down list of all possible glTF files
+
 Editor::Editor()
 {
 	ImGuiStyleSettings();

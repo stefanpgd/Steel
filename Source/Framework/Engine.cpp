@@ -16,6 +16,7 @@
 
 // Projects //
 #include "Projects/HelloCompute/HelloComputeProject.h"
+#include "Projects/TinyHybrid/TinyHybridProject.h"
 
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
@@ -100,7 +101,7 @@ void Engine::InitializeProjects()
 {
 	// TODO: rn a bit convoluted, but in the future we likely initialize multiple projects?
 	// Maybe consider adding a "project" picker if it becomes relevant
-	activeProject = new HelloComputeProject();
+	activeProject = new TinyHybridProject();
 }
 
 void Engine::RegisterWindowClass()

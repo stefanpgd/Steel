@@ -67,6 +67,11 @@ int Texture::GetUAVIndex()
 	return uavIndex;
 }
 
+int Texture::GetRTVIndex()
+{
+	return rtvIndex;
+}
+
 CD3DX12_GPU_DESCRIPTOR_HANDLE Texture::GetSRV()
 {
 	// TODO: Honestly we can add a function in DXAccess along the lines of 'DXAccess::GetDescriptor(heapType, index) //
@@ -78,6 +83,12 @@ CD3DX12_GPU_DESCRIPTOR_HANDLE Texture::GetUAV()
 {
 	DXDescriptorHeap* SRVHeap = DXAccess::GetDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
 	return SRVHeap->GetGPUHandleAt(uavIndex);
+}
+
+CD3DX12_CPU_DESCRIPTOR_HANDLE Texture::GetRTV()
+{
+	DXDescriptorHeap* RTVHeap = DXAccess::GetDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
+	return RTVHeap->GetCPUHandleAt(rtvIndex);
 }
 
 D3D12_GPU_VIRTUAL_ADDRESS Texture::GetGPUVirtualAddress()
@@ -135,7 +146,7 @@ void Texture::UploadData(void* data)
 
 void Texture::CreateDescriptors()
 {
-	DXDescriptorHeap* heap = DXAccess::GetDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+	DXDescriptorHeap* SRVHeap = DXAccess::GetDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
 
 	// Create SRV //
 	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
@@ -144,14 +155,19 @@ void Texture::CreateDescriptors()
 	srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
 	srvDesc.Texture2D.MipLevels = 1;
 
-	srvIndex = heap->GetNextAvailableIndex();
-	DXAccess::GetDevice()->CreateShaderResourceView(textureResource.Get(), &srvDesc, heap->GetCPUHandleAt(srvIndex));
+	srvIndex = SRVHeap->GetNextAvailableIndex();
+	DXAccess::GetDevice()->CreateShaderResourceView(textureResource.Get(), &srvDesc, SRVHeap->GetCPUHandleAt(srvIndex));
 
 	// Create UAV //
 	D3D12_UNORDERED_ACCESS_VIEW_DESC uavDesc = {};
 	uavDesc.Format = format;
 	uavDesc.ViewDimension = D3D12_UAV_DIMENSION_TEXTURE2D;
 
-	uavIndex = heap->GetNextAvailableIndex();
-	DXAccess::GetDevice()->CreateUnorderedAccessView(textureResource.Get(), nullptr, &uavDesc, heap->GetCPUHandleAt(uavIndex));
+	uavIndex = SRVHeap->GetNextAvailableIndex();
+	DXAccess::GetDevice()->CreateUnorderedAccessView(textureResource.Get(), nullptr, &uavDesc, SRVHeap->GetCPUHandleAt(uavIndex));
+
+	// Create RTV //
+	DXDescriptorHeap* RTVHeap = DXAccess::GetDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
+	rtvIndex = RTVHeap->GetNextAvailableIndex();
+	DXAccess::GetDevice()->CreateRenderTargetView(textureResource.Get(), nullptr, RTVHeap->GetCPUHandleAt(rtvIndex));
 }

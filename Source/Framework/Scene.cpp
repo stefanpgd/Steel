@@ -1,9 +1,22 @@
 #include "Framework/Scene.h"
 #include "Graphics/Model.h"
+#include "Graphics/Camera.h"
 
-Scene::Scene()
+Scene::Scene(bool spawnDefaultObjects)
 {
-	//AddModel("Assets/Models/Sponza/sponza.gltf");
+	if(spawnDefaultObjects)
+	{
+		AddModel("Assets/Models/Default/GroundPlane/plane.gltf");
+		//AddModel("Assets/Models/Default/Dragon/dragon.gltf");
+		AddModel("Assets/Models/Default/FlightHelmet/FlightHelmet.gltf");
+	}
+
+	Camera = new ::Camera();
+}
+
+void Scene::Update(float deltaTime)
+{
+	Camera->Update();
 }
 
 void Scene::AddModel(const std::string& path)

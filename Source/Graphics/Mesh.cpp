@@ -33,6 +33,7 @@ Mesh::Mesh(tinygltf::Model& model, tinygltf::Primitive& primitive, glm::mat4& tr
 
 	// Material & Texture Data //
 	materialBuffer = new DXUploadBuffer(&Material, sizeof(Material));
+	LoadTextures(model, primitive);
 }
 
 Mesh::Mesh(Vertex* verts, unsigned int vertexCount, unsigned int* indi,
@@ -116,6 +117,12 @@ void Mesh::SetupGeometryDescription()
 	geometryDescription.Triangles.IndexBuffer = indexBuffer->GetGPUVirtualAddress();
 	geometryDescription.Triangles.IndexFormat = DXGI_FORMAT_R32_UINT;
 	geometryDescription.Triangles.IndexCount = indicesCount;
+}
+
+void Mesh::LoadTextures(tinygltf::Model& model, tinygltf::Primitive& primitive)
+{
+	glTFLoadTextureByType(&Textures.Albedo, glTFTextureType::BaseColor, model, primitive);
+	// Load others if necessary //
 }
 
 void Mesh::BuildBLAS()

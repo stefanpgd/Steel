@@ -4,6 +4,7 @@
 #include <vector>
 
 class Model;
+class Camera;
 
 /// <summary>
 /// Responsible for owning and managing all the geometry in a Scene
@@ -13,14 +14,14 @@ class Model;
 class Scene
 {
 public:
-	Scene();
+	Scene(bool spawnDefaultObjects = true);
 
+	void Update(float deltaTime);
 	void AddModel(const std::string& path);
 
 	const std::vector<Model*>& GetModels();
 public:
-	bool HasGeometryMoved = false;
-	bool HasNewGeometry = false;
+	Camera* Camera;
 
 private:
 	std::vector<Model*> models;

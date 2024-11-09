@@ -62,7 +62,6 @@ void Renderer::Render(Project* project)
 	CD3DX12_CPU_DESCRIPTOR_HANDLE dsvHandle = window->GetDepthDSV();
 
 	directCommands->ResetCommandList(backBufferIndex);
-
 	commandList->SetDescriptorHeaps(1, heaps);
 	commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 

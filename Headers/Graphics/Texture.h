@@ -3,6 +3,10 @@
 #include "Graphics/DXCommon.h"
 #include <string>
 
+/// <summary>
+/// A texture should be treated as any sort of 2D GPU Buffer/Resource that will contain any sort of color information.
+/// May that be a render of the scene or a normal map for a 3D model. This is it supports UAV, SRV and RTV formats. 
+/// </summary>
 class Texture
 {
 public:
@@ -19,8 +23,10 @@ public:
 
 	int GetSRVIndex();
 	int GetUAVIndex();
+	int GetRTVIndex();
 	CD3DX12_GPU_DESCRIPTOR_HANDLE GetSRV();
 	CD3DX12_GPU_DESCRIPTOR_HANDLE GetUAV();
+	CD3DX12_CPU_DESCRIPTOR_HANDLE GetRTV();
 
 	ID3D12Resource* GetAddress();
 	ComPtr<ID3D12Resource> GetResource();
@@ -42,4 +48,5 @@ private:
 
 	int srvIndex = 0;
 	int uavIndex = 0;
+	int rtvIndex = 0;
 };
