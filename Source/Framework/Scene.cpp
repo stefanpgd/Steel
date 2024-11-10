@@ -11,6 +11,7 @@ Scene::Scene(bool spawnDefaultObjects)
 		AddModel("Assets/Models/Default/FlightHelmet/FlightHelmet.gltf");
 	}
 
+	SunDirection = glm::normalize(glm::vec3(-0.325, 0.785f, 0.52f));
 	Camera = new ::Camera();
 }
 

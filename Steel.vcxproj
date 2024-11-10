@@ -142,6 +142,7 @@
     <ClInclude Include="Headers\Graphics\DXUploadBuffer.h" />
     <ClInclude Include="Headers\Graphics\Extensions\Mesh_TinyglTF.h" />
     <ClInclude Include="Headers\Projects\TinyHybrid\TinyHybridProject.h" />
+    <ClInclude Include="Headers\Utilities\EditorElements.h" />
     <ClInclude Include="Headers\Utilities\Random.h" />
     <ClInclude Include="Dependencies\ImGui\imconfig.h" />
     <ClInclude Include="Dependencies\ImGui\imgui.h" />

@@ -35,11 +35,12 @@ void SimpleRenderStage::RecordStage(ComPtr<ID3D12GraphicsCommandList4> commandLi
 
 		commandList->SetGraphicsRoot32BitConstants(0, 16, &MVP, 0);
 		commandList->SetGraphicsRoot32BitConstants(0, 16, &modelMatrix, 16);
+		commandList->SetGraphicsRoot32BitConstants(1, 3, &activeScene->SunDirection, 0);
 
 		const std::vector<Mesh*> meshes = model->GetMeshes();
 		for(Mesh* mesh : meshes)
 		{
-			commandList->SetGraphicsRootDescriptorTable(1, mesh->Textures.Albedo->GetSRV());
+			commandList->SetGraphicsRootDescriptorTable(2, mesh->Textures.Albedo->GetSRV());
 
 			commandList->IASetVertexBuffers(0, 1, &mesh->GetVertexBufferView());
 			commandList->IASetIndexBuffer(&mesh->GetIndexBufferView());
@@ -53,9 +54,10 @@ void SimpleRenderStage::InitializePipeline()
 	CD3DX12_DESCRIPTOR_RANGE1 diffuseTexture[1];
 	diffuseTexture[0].Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0);
 
-	CD3DX12_ROOT_PARAMETER1 rootParameters[2];
+	CD3DX12_ROOT_PARAMETER1 rootParameters[3];
 	rootParameters[0].InitAsConstants(32, 0, 0, D3D12_SHADER_VISIBILITY_VERTEX); // MVP, Model
-	rootParameters[1].InitAsDescriptorTable(1, &diffuseTexture[0], D3D12_SHADER_VISIBILITY_PIXEL); // Lighting data
+	rootParameters[1].InitAsConstants(3, 0, 0, D3D12_SHADER_VISIBILITY_PIXEL); // Sun direction
+	rootParameters[2].InitAsDescriptorTable(1, &diffuseTexture[0], D3D12_SHADER_VISIBILITY_PIXEL); // Lighting data
 
 	rootSignature = new DXRootSignature(rootParameters, _countof(rootParameters), D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT);
 

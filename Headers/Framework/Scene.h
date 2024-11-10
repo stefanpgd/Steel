@@ -2,6 +2,7 @@
 
 #include <string>
 #include <vector>
+#include "Framework/Mathematics.h"
 
 class Model;
 class Camera;
@@ -22,6 +23,7 @@ public:
 	const std::vector<Model*>& GetModels();
 public:
 	Camera* Camera;
+	glm::vec3 SunDirection;
 
 private:
 	std::vector<Model*> models;
