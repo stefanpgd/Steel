@@ -10,14 +10,13 @@
 
 /// <summary>
 /// TODO:
-///	- Position the objects correctly
 /// - Setup a Ray Trace stage which outputs shadows 
 /// - Blend the results together in a final stage 
 /// </summary>
 
 TinyHybridProject::TinyHybridProject()
 {
-	scene = new Scene();
+	scene = new Scene(true, true);
 	scene->Camera->Position = glm::vec3(0.0f, 0.5f, 1.5f);
 
 	simpleRenderStage = new SimpleRenderStage(scene);

@@ -15,7 +15,7 @@ class Camera;
 class Scene
 {
 public:
-	Scene(bool spawnDefaultObjects = true);
+	Scene(bool enableRayTracingGeometry = false, bool spawnDefaultObjects = true);
 
 	void Update(float deltaTime);
 	void AddModel(const std::string& path);
@@ -27,6 +27,7 @@ public:
 
 private:
 	std::vector<Model*> models;
+	bool enableRayTracingGeometry;
 
 	friend class Editor;
 };

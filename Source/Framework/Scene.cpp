@@ -2,7 +2,8 @@
 #include "Graphics/Model.h"
 #include "Graphics/Camera.h"
 
-Scene::Scene(bool spawnDefaultObjects)
+Scene::Scene(bool enableRayTracingGeometry, bool spawnDefaultObjects) 
+	: enableRayTracingGeometry(enableRayTracingGeometry)
 {
 	if(spawnDefaultObjects)
 	{
@@ -22,7 +23,7 @@ void Scene::Update(float deltaTime)
 
 void Scene::AddModel(const std::string& path)
 {
-	models.push_back(new Model(path, true));
+	models.push_back(new Model(path, enableRayTracingGeometry));
 }
 
 const std::vector<Model*>& Scene::GetModels()
