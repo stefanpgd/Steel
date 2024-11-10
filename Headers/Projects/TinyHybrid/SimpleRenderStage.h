@@ -22,4 +22,3 @@ private:
 	DXRootSignature* rootSignature;
 	DXPipeline* renderPipeline;
 };
-

@@ -1,5 +1,7 @@
 #include "Projects/TinyHybrid/TinyHybridProject.h"
 #include "Projects/TinyHybrid/SimpleRenderStage.h"
+#include "Projects/TinyHybrid/RTShadowsStage.h"
+
 #include "Graphics/Model.h"
 #include "Graphics/Camera.h"
 #include "Utilities/EditorElements.h"
@@ -20,6 +22,7 @@ TinyHybridProject::TinyHybridProject()
 	scene->Camera->Position = glm::vec3(0.0f, 0.5f, 1.5f);
 
 	simpleRenderStage = new SimpleRenderStage(scene);
+	shadowStage = new RTShadowStage(scene);
 }
 
 void TinyHybridProject::Update(float deltaTime)
@@ -47,4 +50,5 @@ void TinyHybridProject::Update(float deltaTime)
 void TinyHybridProject::Render(ComPtr<ID3D12GraphicsCommandList4> commandList)
 {
 	simpleRenderStage->RecordStage(commandList);
+	shadowStage->RecordStage(commandList);
 }

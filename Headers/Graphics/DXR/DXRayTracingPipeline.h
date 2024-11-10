@@ -8,6 +8,11 @@ class Texture;
 
 struct DXRayTracingPipelineSettings
 {
+	// Shaders //
+	std::wstring rayGenPath;
+	std::wstring closestHitPath;
+	std::wstring missPath;
+
 	// Root Signature Settings //
 	CD3DX12_ROOT_PARAMETER* rayGenParameters = nullptr;
 	unsigned int rayGenParameterCount = 0;
@@ -38,7 +43,7 @@ private:
 	void CreateRootSignature(ComPtr<ID3D12RootSignature>& rootSignature,
 		D3D12_ROOT_PARAMETER* parameterData, unsigned int parameterCount, bool isLocal);
 
-	void CompileShaderLibrary(ComPtr<IDxcBlob>& shaderLibrary, std::wstring shaderName);
+	void CompileShaderLibrary(ComPtr<IDxcBlob>& shaderLibrary, std::wstring shaderPath);
 
 private:
 	DXRayTracingPipelineSettings settings;

@@ -24,9 +24,9 @@ DXRayTracingPipeline::DXRayTracingPipeline(DXRayTracingPipelineSettings settings
 	dxcHelper.CreateInstance(CLSID_DxcLibrary, &library);
 	library->CreateIncludeHandler(&dxcIncludeHandler);
 
-	CompileShaderLibrary(rayGenLibrary, L"RayGen.hlsl");
-	CompileShaderLibrary(hitLibrary, L"ClosestHit-PT.hlsl");
-	CompileShaderLibrary(missLibrary, L"Miss.hlsl");
+	CompileShaderLibrary(rayGenLibrary, settings.rayGenPath);
+	CompileShaderLibrary(hitLibrary, settings.closestHitPath);
+	CompileShaderLibrary(missLibrary, settings.missPath);
 
 	// Create pipeline & make shader binding table //
 	CreatePipeline();
@@ -120,16 +120,13 @@ void DXRayTracingPipeline::CreateRootSignature(ComPtr<ID3D12RootSignature>& root
 		pSigBlob->GetBufferSize(), IID_PPV_ARGS(&rootSignature)));
 }
 
-void DXRayTracingPipeline::CompileShaderLibrary(ComPtr<IDxcBlob>& shaderLibrary, std::wstring shaderName)
+void DXRayTracingPipeline::CompileShaderLibrary(ComPtr<IDxcBlob>& shaderLibrary, std::wstring shaderPath)
 {
 	UINT32 code(0);
 	IDxcBlobEncoding* pShaderText(nullptr);
 	IDxcOperationResult* result;
 
-	std::wstring path = L"Source/Shaders/" + shaderName;
-	std::wstring filePath = std::wstring(path.begin(), path.end());
-
-	ThrowIfFailed(library->CreateBlobFromFile(filePath.c_str(), &code, &pShaderText));
-	ThrowIfFailed(compiler->Compile(pShaderText, filePath.c_str(), L"", L"lib_6_3", nullptr, 0, nullptr, 0, dxcIncludeHandler, &result));
+	ThrowIfFailed(library->CreateBlobFromFile(shaderPath.c_str(), &code, &pShaderText));
+	ThrowIfFailed(compiler->Compile(pShaderText, shaderPath.c_str(), L"", L"lib_6_3", nullptr, 0, nullptr, 0, dxcIncludeHandler, &result));
 	ThrowIfFailed(result->GetResult(&shaderLibrary));
 }
