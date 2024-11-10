@@ -1,6 +1,7 @@
 #include "Projects/TinyHybrid/TinyHybridProject.h"
 #include "Projects/TinyHybrid/SimpleRenderStage.h"
 #include "Projects/TinyHybrid/RTShadowsStage.h"
+#include "Projects/TinyHybrid/BlendResultStage.h"
 
 #include "Graphics/Model.h"
 #include "Graphics/Camera.h"
@@ -12,7 +13,6 @@
 
 /// <summary>
 /// TODO:
-/// - Setup a Ray Trace stage which outputs shadows 
 /// - Blend the results together in a final stage 
 /// </summary>
 
@@ -23,6 +23,7 @@ TinyHybridProject::TinyHybridProject()
 
 	simpleRenderStage = new SimpleRenderStage(scene);
 	shadowStage = new RTShadowStage(scene);
+	blendStage = new BlendResultStage(shadowStage->outputBuffer);
 }
 
 void TinyHybridProject::Update(float deltaTime)
@@ -52,4 +53,5 @@ void TinyHybridProject::Render(ComPtr<ID3D12GraphicsCommandList4> commandList)
 {
 	simpleRenderStage->RecordStage(commandList);
 	shadowStage->RecordStage(commandList);
+	blendStage->RecordStage(commandList);
 }

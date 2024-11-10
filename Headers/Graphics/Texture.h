@@ -23,10 +23,8 @@ public:
 
 	int GetSRVIndex();
 	int GetUAVIndex();
-	int GetRTVIndex();
 	CD3DX12_GPU_DESCRIPTOR_HANDLE GetSRV();
 	CD3DX12_GPU_DESCRIPTOR_HANDLE GetUAV();
-	CD3DX12_CPU_DESCRIPTOR_HANDLE GetRTV();
 
 	ID3D12Resource* GetAddress();
 	ComPtr<ID3D12Resource> GetResource();
@@ -48,5 +46,4 @@ private:
 
 	int srvIndex = 0;
 	int uavIndex = 0;
-	int rtvIndex = 0;
 };

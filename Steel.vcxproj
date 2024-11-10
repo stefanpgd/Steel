@@ -88,6 +88,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Source\Projects\TinyHybrid\BlendResultStage.cpp" />
     <ClCompile Include="Source\Projects\TinyHybrid\RTShadowsStage.cpp" />
     <ClCompile Include="Source\Graphics\Camera.cpp" />
     <ClCompile Include="Source\Projects\TinyHybrid\SimpleRenderStage.cpp" />
@@ -129,6 +130,7 @@
     <ClCompile Include="Source\Projects\TinyHybrid\TinyHybridProject.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Headers\Projects\TinyHybrid\BlendResultStage.h" />
     <ClInclude Include="Headers\Graphics\Camera.h" />
     <ClInclude Include="Headers\Framework\Scene.h" />
     <ClInclude Include="Headers\Graphics\DXComponents.h" />
@@ -199,37 +201,43 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Compute</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.1</ShaderModel>
     </FxCompile>
-    <FxCompile Include="Source\Shaders\RTShadows\ClosestHit.hlsl">
+    <FxCompile Include="Source\Shaders\TinyHybrid\blendResults.compute.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Compute</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">4.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Compute</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">4.0</ShaderModel>
+    </FxCompile>
+    <FxCompile Include="Source\Shaders\TinyHybrid\ClosestHit.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Library</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">6.3</ShaderModel>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Library</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">6.3</ShaderModel>
     </FxCompile>
-    <FxCompile Include="Source\Shaders\RTShadows\Common.hlsl">
+    <FxCompile Include="Source\Shaders\TinyHybrid\Common.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Library</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">6.3</ShaderModel>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Library</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">6.3</ShaderModel>
     </FxCompile>
-    <FxCompile Include="Source\Shaders\RTShadows\Miss.hlsl">
+    <FxCompile Include="Source\Shaders\TinyHybrid\Miss.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Library</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">6.3</ShaderModel>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Library</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">6.3</ShaderModel>
     </FxCompile>
-    <FxCompile Include="Source\Shaders\RTShadows\RayGen.hlsl">
+    <FxCompile Include="Source\Shaders\TinyHybrid\RayGen.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Library</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Library</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">6.3</ShaderModel>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">6.3</ShaderModel>
     </FxCompile>
-    <FxCompile Include="Source\Shaders\simpleRasterizer.pixel.hlsl">
+    <FxCompile Include="Source\Shaders\TinyHybrid\simpleRasterizer.pixel.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.1</ShaderModel>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.1</ShaderModel>
     </FxCompile>
-    <FxCompile Include="Source\Shaders\simpleRasterizer.vertex.hlsl">
+    <FxCompile Include="Source\Shaders\TinyHybrid\simpleRasterizer.vertex.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.1</ShaderModel>

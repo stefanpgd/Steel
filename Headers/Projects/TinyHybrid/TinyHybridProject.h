@@ -4,6 +4,7 @@
 class Scene;
 class SimpleRenderStage;
 class RTShadowStage;
+class BlendResultStage;
 
 class TinyHybridProject : public Project
 {
@@ -19,4 +20,5 @@ private:
 	// Render Stages //
 	SimpleRenderStage* simpleRenderStage;
 	RTShadowStage* shadowStage;
+	BlendResultStage* blendStage;
 };

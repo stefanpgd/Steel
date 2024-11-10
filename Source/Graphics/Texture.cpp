@@ -67,11 +67,6 @@ int Texture::GetUAVIndex()
 	return uavIndex;
 }
 
-int Texture::GetRTVIndex()
-{
-	return rtvIndex;
-}
-
 CD3DX12_GPU_DESCRIPTOR_HANDLE Texture::GetSRV()
 {
 	// TODO: Honestly we can add a function in DXAccess along the lines of 'DXAccess::GetDescriptor(heapType, index) //
@@ -83,12 +78,6 @@ CD3DX12_GPU_DESCRIPTOR_HANDLE Texture::GetUAV()
 {
 	DXDescriptorHeap* SRVHeap = DXAccess::GetDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
 	return SRVHeap->GetGPUHandleAt(uavIndex);
-}
-
-CD3DX12_CPU_DESCRIPTOR_HANDLE Texture::GetRTV()
-{
-	DXDescriptorHeap* RTVHeap = DXAccess::GetDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
-	return RTVHeap->GetCPUHandleAt(rtvIndex);
 }
 
 D3D12_GPU_VIRTUAL_ADDRESS Texture::GetGPUVirtualAddress()
@@ -165,9 +154,4 @@ void Texture::CreateDescriptors()
 
 	uavIndex = SRVHeap->GetNextAvailableIndex();
 	DXAccess::GetDevice()->CreateUnorderedAccessView(textureResource.Get(), nullptr, &uavDesc, SRVHeap->GetCPUHandleAt(uavIndex));
-
-	// Create RTV //
-	DXDescriptorHeap* RTVHeap = DXAccess::GetDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
-	rtvIndex = RTVHeap->GetNextAvailableIndex();
-	DXAccess::GetDevice()->CreateRenderTargetView(textureResource.Get(), nullptr, RTVHeap->GetCPUHandleAt(rtvIndex));
 }

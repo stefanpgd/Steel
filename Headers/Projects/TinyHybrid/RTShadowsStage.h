@@ -26,6 +26,9 @@ public:
 	void Update(float deltaTime);
 	void RecordStage(ComPtr<ID3D12GraphicsCommandList4> commandList) override;
 
+public:
+	Texture* outputBuffer;
+
 private:
 	void CreateShaderResources();
 	void InitializePipeline();
@@ -34,7 +37,6 @@ private:
 private:
 	Scene* activeScene;
 
-	Texture* outputBuffer;
 	RTShadowInfo shadowInfo;
 	DXUploadBuffer* shadowInfoBuffer;
 

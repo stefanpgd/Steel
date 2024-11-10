@@ -63,8 +63,8 @@ void SimpleRenderStage::InitializePipeline()
 
 	DXPipelineDescription pipelineDescription;
 	pipelineDescription.RootSignature = rootSignature;
-	pipelineDescription.VertexPath = "Source/Shaders/simpleRasterizer.vertex.hlsl";
-	pipelineDescription.PixelPath = "Source/Shaders/simpleRasterizer.pixel.hlsl";
+	pipelineDescription.VertexPath = "Source/Shaders/TinyHybrid/simpleRasterizer.vertex.hlsl";
+	pipelineDescription.PixelPath = "Source/Shaders/TinyHybrid/simpleRasterizer.pixel.hlsl";
 
 	renderPipeline = new DXPipeline(pipelineDescription);
 }

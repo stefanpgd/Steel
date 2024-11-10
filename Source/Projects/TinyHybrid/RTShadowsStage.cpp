@@ -36,21 +36,20 @@ void RTShadowStage::Update(float deltaTime)
 
 void RTShadowStage::RecordStage(ComPtr<ID3D12GraphicsCommandList4> commandList)
 {
-	ComPtr<ID3D12Resource> renderTargetBuffer = DXAccess::GetWindow()->GetCurrentScreenBuffer();
-	ID3D12Resource* const output = outputBuffer->GetAddress();
+	if(!activeScene)
+	{
+		LOG(Log::MessageType::Error, "Cannot trace shadows if 'scene' was never initialized!");
+		return;
+	}
 	
 	// 1) Prepare render buffer & Run the ray tracing pipeline // 
+	ID3D12Resource* const output = outputBuffer->GetAddress();
 	TransitionResource(output, D3D12_RESOURCE_STATE_COPY_SOURCE, D3D12_RESOURCE_STATE_UNORDERED_ACCESS);
-	
+
 	commandList->SetPipelineState1(rayTracePipeline->GetPipelineState());
 	commandList->DispatchRays(shaderTable->GetDispatchRayDescription());
-	
+
 	TransitionResource(output, D3D12_RESOURCE_STATE_UNORDERED_ACCESS, D3D12_RESOURCE_STATE_COPY_SOURCE);
-	
-	// 2) Copy output from the ray tracing pipeline to the screen buffer //
-	TransitionResource(renderTargetBuffer.Get(), D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_COPY_DEST);
-	commandList->CopyResource(renderTargetBuffer.Get(), output);
-	TransitionResource(renderTargetBuffer.Get(), D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_RENDER_TARGET);
 }
 
 void RTShadowStage::CreateShaderResources()
@@ -67,9 +66,9 @@ void RTShadowStage::InitializePipeline()
 	DXRayTracingPipelineSettings settings;
 	settings.maxRayRecursionDepth = 4;
 
-	settings.rayGenPath = L"Source/Shaders/RTShadows/RayGen.hlsl";
-	settings.closestHitPath = L"Source/Shaders/RTShadows/ClosestHit.hlsl";
-	settings.missPath = L"Source/Shaders/RTShadows/Miss.hlsl";
+	settings.rayGenPath = L"Source/Shaders/TinyHybrid/RayGen.hlsl";
+	settings.closestHitPath = L"Source/Shaders/TinyHybrid/ClosestHit.hlsl";
+	settings.missPath = L"Source/Shaders/TinyHybrid/Miss.hlsl";
 
 	// RayGen Root //
 	CD3DX12_DESCRIPTOR_RANGE rayGenRange[1];
