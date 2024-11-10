@@ -244,7 +244,6 @@ static inline int32_t GetNumComponentsInType(uint32_t ty) {
   }
 }
 
-// TODO(syoyo): Move these functions to TinyGLTF class
 bool IsDataURI(const std::string &in);
 bool DecodeDataURI(std::vector<unsigned char> *out, std::string &mime_type,
                    const std::string &in, size_t reqBytes, bool checkSize);
@@ -321,7 +320,6 @@ class Value {
   }
 
   // Use this function if you want to have number value as int.
-  // TODO(syoyo): Support int value larger than 32 bits
   int GetNumberAsInt() const {
     if (type_ == REAL_TYPE) {
       return int(real_value_);
@@ -427,7 +425,6 @@ TINYGLTF_VALUE_GET(Value::Object, object_value_)
 using ColorValue = std::array<double, 4>;
 
 // === legacy interface ====
-// TODO(syoyo): Deprecate `Parameter` class.
 struct Parameter {
   bool bool_value = false;
   bool has_number_value = false;
@@ -772,7 +769,6 @@ struct Material {
   TextureInfo emissiveTexture;
 
   // For backward compatibility
-  // TODO(syoyo): Remove `values` and `additionalValues` in the next release.
   ParameterMap values;
   ParameterMap additionalValues;
 
@@ -1504,8 +1500,6 @@ class TinyGLTF {
   /// This may be helpful if you want to serialize a full description of glTF
   /// data.
   ///
-  /// TODO(LTE): Supply parsing option as function arguments to
-  /// `LoadASCIIFromFile()` and others, not by a class method
   ///
   void SetSerializeDefaultValues(const bool enabled) {
     serialize_default_values_ = enabled;
@@ -2394,7 +2388,6 @@ std::string base64_decode(std::string const &encoded_string) {
 #endif
 
 // https://github.com/syoyo/tinygltf/issues/228
-// TODO(syoyo): Use uriparser https://uriparser.github.io/ for stricter Uri
 // decoding?
 //
 // Uri Decoding from DLIB
@@ -2857,7 +2850,6 @@ bool FileExists(const std::string &abs_filename, void *) {
     return false;
   }
 #else
-  // TODO: is_directory check
   FILE *fp = nullptr;
   errno_t err = fopen_s(&fp, abs_filename.c_str(), "rb");
   if (err != 0) {
@@ -3339,7 +3331,6 @@ bool DecodeDataURI(std::vector<unsigned char> *out, std::string &mime_type,
     }
   }
 
-  // TODO(syoyo): Allow empty buffer? #229
   if (data.empty()) {
     return false;
   }
@@ -3560,7 +3551,6 @@ std::string JsonToString(const detail::json &o, int spacing = -1) {
   StringBuffer buffer;
   if (spacing == -1) {
     Writer<StringBuffer> writer(buffer);
-    // TODO: Better error handling.
     // https://github.com/syoyo/tinygltf/issues/332
     if (!o.Accept(writer)) {
       return "tiny_gltf::JsonToString() failed rapidjson conversion";
@@ -4218,7 +4208,6 @@ static bool ParseImage(Image *image, const int image_idx, std::string *err,
   // A glTF image must either reference a bufferView or an image uri
 
   // schema says oneOf [`bufferView`, `uri`]
-  // TODO(syoyo): Check the type of each parameters.
   detail::json_const_iterator it;
   bool hasBufferView = detail::FindMember(o, "bufferView", it);
   bool hasURI = detail::FindMember(o, "uri", it);
@@ -5322,7 +5311,6 @@ static bool ParseMaterial(Material *material, std::string *err, std::string *war
   // as Parameter. This will create duplicated information for
   // example(pbrMetallicRoughness), but should be negligible in terms of memory
   // consumption.
-  // TODO(syoyo): Remove in the next major release.
   material->values.clear();
   material->additionalValues.clear();
 
@@ -5510,7 +5498,6 @@ static bool ParseSampler(Sampler *sampler, std::string *err,
   // ParseIntegerProperty(&wrapR, err, o, "wrapR", false);  // tinygltf
   // extension
 
-  // TODO(syoyo): Check the value is allowed one.
   // (e.g. we allow 9728(NEAREST), but don't allow 9727)
 
   sampler->minFilter = minFilter;
@@ -5578,7 +5565,6 @@ static bool ParsePerspectiveCamera(
   ParseExtrasAndExtensions(camera, err, o,
                            store_original_json_for_extras_and_extensions);
 
-  // TODO(syoyo): Validate parameter values.
 
   return true;
 }
@@ -5592,7 +5578,6 @@ static bool ParseSpotLight(SpotLight *light, std::string *err,
   ParseExtrasAndExtensions(light, err, o,
                            store_original_json_for_extras_and_extensions);
 
-  // TODO(syoyo): Validate parameter values.
 
   return true;
 }
@@ -5629,7 +5614,6 @@ static bool ParseOrthographicCamera(
   camera->zfar = zfar;
   camera->znear = znear;
 
-  // TODO(syoyo): Validate parameter values.
 
   return true;
 }
@@ -6979,8 +6963,6 @@ static bool ValueToJson(const Value &value, detail::json *ret) {
       break;
     }
     case BINARY_TYPE:
-      // TODO
-      // obj = detail::json(value.Get<std::vector<unsigned char>>());
       return false;
       break;
     case OBJECT_TYPE: {
@@ -7023,8 +7005,6 @@ static bool ValueToJson(const Value &value, detail::json *ret) {
       break;
     }
     case BINARY_TYPE:
-      // TODO
-      // obj = json(value.Get<std::vector<unsigned char>>());
       return false;
       break;
     case OBJECT_TYPE: {
@@ -7342,7 +7322,6 @@ static void SerializeGltfAsset(const Asset &asset, detail::json &o) {
     version = "2.0";
   }
 
-  // TODO(syoyo): Do we need to check if `version` is greater or equal to 2.0?
   SerializeStringProperty("version", version, o);
 
   SerializeExtrasAndExtensions(asset, o);

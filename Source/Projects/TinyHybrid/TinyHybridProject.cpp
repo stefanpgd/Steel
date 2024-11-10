@@ -11,11 +11,6 @@
 #include <imgui.h>
 #include <vector>
 
-/// <summary>
-/// TODO:
-/// - Blend the results together in a final stage 
-/// </summary>
-
 TinyHybridProject::TinyHybridProject()
 {
 	scene = new Scene(true, true);
@@ -32,20 +27,9 @@ void TinyHybridProject::Update(float deltaTime)
 	shadowStage->Update(deltaTime);
 
 	// Editor //
-	ImGui::Begin("Transform");
-
-	const std::vector<Model*>& models = scene->GetModels();
-	for(int i = 0; i < models.size(); i++)
-	{
-		ImGui::PushID(i);
-		ImGui::SeparatorText(models[i]->Name.c_str());
-		EditorTransformInfo(models[i]->transform);
-		ImGui::PopID();
-	}
-
+	ImGui::Begin("Scene");
 	ImGui::DragFloat3("Sun Direction", &scene->SunDirection[0], 0.001f, -1.0f, 1.0f);
 	scene->SunDirection = glm::normalize(scene->SunDirection);
-
 	ImGui::End();
 }
 
