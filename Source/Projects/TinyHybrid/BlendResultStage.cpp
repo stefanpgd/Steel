@@ -8,15 +8,16 @@ BlendResultStage::BlendResultStage(Texture* shadowOutput) : shadowOutput(shadowO
 	int width = DXAccess::GetWindow()->GetWindowWidth();
 	int height = DXAccess::GetWindow()->GetWindowHeight();
 	blendedOutput = new Texture(width, height);
+	sceneRender = new Texture(width, height);
 
 	CD3DX12_DESCRIPTOR_RANGE1 sceneRenderRange[1];
-	sceneRenderRange[0].Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0);
+	sceneRenderRange[0].Init(D3D12_DESCRIPTOR_RANGE_TYPE_UAV, 1, 0);
 
 	CD3DX12_DESCRIPTOR_RANGE1 shadowCaptureRange[1];
-	shadowCaptureRange[0].Init(D3D12_DESCRIPTOR_RANGE_TYPE_UAV, 1, 0);
+	shadowCaptureRange[0].Init(D3D12_DESCRIPTOR_RANGE_TYPE_UAV, 1, 1);
 
 	CD3DX12_DESCRIPTOR_RANGE1 blendBufferRange[1];
-	blendBufferRange[0].Init(D3D12_DESCRIPTOR_RANGE_TYPE_UAV, 1, 1);
+	blendBufferRange[0].Init(D3D12_DESCRIPTOR_RANGE_TYPE_UAV, 1, 2);
 
 	CD3DX12_ROOT_PARAMETER1 rootParameters[3];
 	rootParameters[0].InitAsDescriptorTable(1, &sceneRenderRange[0]); 
@@ -31,17 +32,31 @@ void BlendResultStage::RecordStage(ComPtr<ID3D12GraphicsCommandList4> commandLis
 {
 	ComPtr<ID3D12Resource> renderTargetBuffer = DXAccess::GetWindow()->GetCurrentScreenBuffer();
 
-	// 1) Present UV coords onto render buffer //
-	//int dispatchX = window->GetWindowWidth() / 8;
-	//int dispatchY = window->GetWindowHeight() / 8;
-	//commandList->SetComputeRootSignature(rootSignature->GetAddress());
-	//commandList->SetPipelineState(computePipeline->GetAddress());
-	//
-	//commandList->SetComputeRootDescriptorTable(0, DXAccess::GetWindow()->);
-	//commandList->Dispatch(dispatchX, dispatchY, 1);
+	// 1) Copy scene render into usable UAV textures 
+	TransitionResource(sceneRender->GetAddress(), D3D12_RESOURCE_STATE_COPY_SOURCE, D3D12_RESOURCE_STATE_COPY_DEST);
+	TransitionResource(renderTargetBuffer.Get(), D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_COPY_SOURCE);
 
-	// 2) Copy output from the ray tracing pipeline to the screen buffer //
-	//TransitionResource(renderTargetBuffer.Get(), D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE);
-	////commandList->CopyResource(renderTargetBuffer.Get(), output);
-	//TransitionResource(renderTargetBuffer.Get(), D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE, D3D12_RESOURCE_STATE_RENDER_TARGET);
+	commandList->CopyResource(sceneRender->GetAddress(), renderTargetBuffer.Get());
+
+	TransitionResource(sceneRender->GetAddress(), D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_UNORDERED_ACCESS);
+	TransitionResource(renderTargetBuffer.Get(), D3D12_RESOURCE_STATE_COPY_SOURCE, D3D12_RESOURCE_STATE_RENDER_TARGET);
+
+	// 2) Run blend pipeline
+
+	int dispatchX = window->GetWindowWidth() / 8;
+	int dispatchY = window->GetWindowHeight() / 8;
+	commandList->SetComputeRootSignature(rootSignature->GetAddress());
+	commandList->SetPipelineState(computePipeline->GetAddress());
+
+	commandList->SetComputeRootDescriptorTable(0, sceneRender->GetUAV());
+	commandList->SetComputeRootDescriptorTable(1, shadowOutput->GetUAV());
+	commandList->SetComputeRootDescriptorTable(2, blendedOutput->GetUAV());
+	commandList->Dispatch(dispatchX, dispatchY, 1);
+
+	// 3) Copy end result to screen & make sure everything is in the right state 
+	TransitionResource(sceneRender->GetAddress(), D3D12_RESOURCE_STATE_UNORDERED_ACCESS, D3D12_RESOURCE_STATE_COPY_SOURCE);
+
+	TransitionResource(renderTargetBuffer.Get(), D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_COPY_DEST);
+	commandList->CopyResource(renderTargetBuffer.Get(), blendedOutput->GetAddress());
+	TransitionResource(renderTargetBuffer.Get(), D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_RENDER_TARGET);
 }

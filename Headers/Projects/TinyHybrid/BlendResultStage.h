@@ -13,5 +13,6 @@ public:
 
 private:
 	Texture* shadowOutput;
+	Texture* sceneRender;
 	Texture* blendedOutput;
 };

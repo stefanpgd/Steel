@@ -41,14 +41,13 @@ void RTShadowStage::RecordStage(ComPtr<ID3D12GraphicsCommandList4> commandList)
 		LOG(Log::MessageType::Error, "Cannot trace shadows if 'scene' was never initialized!");
 		return;
 	}
-	
-	// 1) Prepare render buffer & Run the ray tracing pipeline // 
-	ID3D12Resource* const output = outputBuffer->GetAddress();
-	TransitionResource(output, D3D12_RESOURCE_STATE_COPY_SOURCE, D3D12_RESOURCE_STATE_UNORDERED_ACCESS);
 
+	ComPtr<ID3D12Resource> renderTargetBuffer = DXAccess::GetWindow()->GetCurrentScreenBuffer();
+	ID3D12Resource* const output = outputBuffer->GetAddress();
+
+	TransitionResource(output, D3D12_RESOURCE_STATE_COPY_SOURCE, D3D12_RESOURCE_STATE_UNORDERED_ACCESS);
 	commandList->SetPipelineState1(rayTracePipeline->GetPipelineState());
 	commandList->DispatchRays(shaderTable->GetDispatchRayDescription());
-
 	TransitionResource(output, D3D12_RESOURCE_STATE_UNORDERED_ACCESS, D3D12_RESOURCE_STATE_COPY_SOURCE);
 }
 
