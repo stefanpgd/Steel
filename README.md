@@ -1,4 +1,4 @@
-# 🪨⛏️ Steel - A DirectX 12 Framework
+# ⛏️ Steel - A DirectX 12 Framework
 This is my personal framework build with DirectX 12 which is used for my personal projects.
 Steel gets continously iterated with each project, since I usually find the need for new systems with different projects.
 
@@ -10,8 +10,8 @@ Steel gets continously iterated with each project, since I usually find the need
 
 ### 📚 Example/Reference Project(s)
 These are example projects to use as reference, or to quickly build off from for the next project:
-- (WIP) Tiny Hybrid, a simple setup of rasterization with Ray Traced shadows
-- Hello Compute, a setup of a compute pipeline outputting UV coordinates to the screen
+- TinyHybrid, a small setup of rasterized models with ray traced shadows (DXR)
+- HelloCompute, a setup of a compute pipeline outputting UV coordinates to the screen
 
 ### ✍️ Work
 These are different project(s) that I've made using Steel. 
