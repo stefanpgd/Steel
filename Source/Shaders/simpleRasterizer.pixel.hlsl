@@ -22,5 +22,5 @@ float4 main(PixelIN IN) : SV_TARGET
     // Ambient + Diffuse 
     float3 output = (albedo * 0.04) + albedo * diffuse;
     
-    return float4(albedo * diffuse, 1.0f);
+    return float4(albedo, 1.0f);
 }

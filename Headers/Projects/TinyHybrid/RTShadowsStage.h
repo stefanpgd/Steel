@@ -12,8 +12,10 @@ class DXShaderBindingTable;
 
 struct RTShadowInfo
 {
-	glm::vec3 sunDirection;
-	float stub[61];
+	float cameraPosition[3];
+	BOOL space;
+	float sunDirection[3];
+	float stub[57];
 };
 
 class RTShadowStage : public RenderStage
@@ -21,6 +23,7 @@ class RTShadowStage : public RenderStage
 public:
 	RTShadowStage(Scene* sceneToRender);
 
+	void Update(float deltaTime);
 	void RecordStage(ComPtr<ID3D12GraphicsCommandList4> commandList) override;
 
 private:
@@ -30,9 +33,9 @@ private:
 
 private:
 	Scene* activeScene;
-	RTShadowInfo shadowInfo;
 
 	Texture* outputBuffer;
+	RTShadowInfo shadowInfo;
 	DXUploadBuffer* shadowInfoBuffer;
 
 	DXTopLevelAS* TLAS;

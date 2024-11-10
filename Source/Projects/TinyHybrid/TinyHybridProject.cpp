@@ -28,6 +28,7 @@ TinyHybridProject::TinyHybridProject()
 void TinyHybridProject::Update(float deltaTime)
 {
 	scene->Update(deltaTime);
+	shadowStage->Update(deltaTime);
 
 	// Editor //
 	ImGui::Begin("Transform");
