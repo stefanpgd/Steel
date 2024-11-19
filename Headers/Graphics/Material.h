@@ -9,7 +9,6 @@
 struct Material
 {
 	float color[3] = { 1.0f, 1.0f, 1.0f };
-	float stubs[61];
 };
 
 class Texture;

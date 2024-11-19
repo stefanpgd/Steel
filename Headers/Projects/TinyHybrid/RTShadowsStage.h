@@ -5,7 +5,7 @@
 
 class Scene;
 class Texture;
-class DXUploadBuffer;
+class DXBuffer;
 class DXRayTracingPipeline;
 class DXTopLevelAS;
 class DXShaderBindingTable;
@@ -38,7 +38,7 @@ private:
 	Scene* activeScene;
 
 	RTShadowInfo shadowInfo;
-	DXUploadBuffer* shadowInfoBuffer;
+	DXBuffer* shadowInfoBuffer;
 
 	DXTopLevelAS* TLAS;
 	DXRayTracingPipeline* rayTracePipeline;

@@ -1,6 +1,5 @@
 #include "Projects/TinyHybrid/RTShadowsStage.h"
 #include "Graphics/Texture.h"
-#include "Graphics/DXUploadBuffer.h"
 #include "Graphics/DXComponents.h"
 #include "Graphics/DXR/DXRayTracingPipeline.h"
 #include "Graphics/DXR/DXTLAS.h"
@@ -57,7 +56,13 @@ void RTShadowStage::CreateShaderResources()
 	int height = DXAccess::GetWindow()->GetWindowHeight();
 
 	outputBuffer = new Texture(width, height, DXGI_FORMAT_R8G8B8A8_UNORM);
-	shadowInfoBuffer = new DXUploadBuffer(&shadowInfo, sizeof(RTShadowInfo));
+
+	DXBufferProperties bufferProperties;
+	bufferProperties.isCPUAccesible = true;
+	bufferProperties.isConstantBuffer = true;
+	bufferProperties.isStructuredBuffer = false;
+
+	shadowInfoBuffer = new DXBuffer(bufferProperties, &shadowInfo, 1, sizeof(RTShadowInfo));
 }
 
 void RTShadowStage::InitializePipeline()

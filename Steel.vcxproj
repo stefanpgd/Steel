@@ -110,9 +110,7 @@
     <ClCompile Include="Dependencies\ImGui\imgui_impl_win32.cpp" />
     <ClCompile Include="Dependencies\ImGui\imgui_tables.cpp" />
     <ClCompile Include="Dependencies\ImGui\imgui_widgets.cpp" />
-    <ClCompile Include="Source\Graphics\DXUploadBuffer.cpp" />
     <ClCompile Include="Source\Graphics\RenderStage.cpp" />
-    <ClCompile Include="Source\Graphics\DXStructuredBuffer.cpp" />
     <ClCompile Include="Source\Graphics\DXComputePipeline.cpp" />
     <ClCompile Include="Source\Graphics\DepthBuffer.cpp" />
     <ClCompile Include="Source\Graphics\DXCommands.cpp" />
@@ -145,7 +143,6 @@
     <ClInclude Include="Headers\Projects\HelloCompute\ComputeUVStage.h" />
     <ClInclude Include="Headers\Framework\Editor.h" />
     <ClInclude Include="Headers\Graphics\DXCommon.h" />
-    <ClInclude Include="Headers\Graphics\DXUploadBuffer.h" />
     <ClInclude Include="Headers\Graphics\Extensions\Mesh_TinyglTF.h" />
     <ClInclude Include="Headers\Projects\TinyHybrid\TinyHybridProject.h" />
     <ClInclude Include="Headers\Utilities\EditorElements.h" />
@@ -158,7 +155,6 @@
     <ClInclude Include="Dependencies\ImGui\imstb_rectpack.h" />
     <ClInclude Include="Dependencies\ImGui\imstb_textedit.h" />
     <ClInclude Include="Dependencies\ImGui\imstb_truetype.h" />
-    <ClInclude Include="Headers\Graphics\DXStructuredBuffer.h" />
     <ClInclude Include="Headers\Graphics\DXComputePipeline.h" />
     <ClInclude Include="Headers\Framework\Engine.h" />
     <ClInclude Include="Headers\Graphics\DepthBuffer.h" />
