@@ -1,10 +1,6 @@
 #pragma once
 #include "DXCommon.h"
 
-// Notes to self:
-// - The GPU heap where the resources gets uploaded determines whether the resource is CPU accessible or not
-// meaning that we can or can't map directly to it. 
-
 /// <summary>
 /// Functionality description of a DXBuffer.
 /// based on the settings enabled/disabled, the functionality of the buffer changes.
@@ -33,11 +29,11 @@ public:
 	DXBuffer(const void* data, unsigned int numberOfElements, unsigned int elementSize);
 	DXBuffer(DXBufferProperties properties, const void* data, unsigned int numberOfElements, unsigned int elementSize);
 
-	void UpdateData(void* data);
-	void Resize();
+	void UpdateData(const void* data);
 
 	unsigned int GetBufferSize();
 
+	ID3D12Resource* Get();
 	ComPtr<ID3D12Resource> GetResource();
 	D3D12_GPU_VIRTUAL_ADDRESS GetGPUVirtualAddress();
 	CD3DX12_GPU_DESCRIPTOR_HANDLE GetCBV();
@@ -45,9 +41,11 @@ public:
 	CD3DX12_GPU_DESCRIPTOR_HANDLE GetUAV();
 
 private:
+	bool BufferTypeValidation();
+
 	void AllocateResource();
 	void UploadData(const void* data);
-	void CreateDescriptor();
+	void CreateDescriptors();
 
 private:
 	// Resource info //
@@ -55,9 +53,15 @@ private:
 	DXBufferProperties bufferProperties;
 	D3D12_RESOURCE_STATES resourceState;
 
+	// The data that needs to be allocated sometimes needs to be aligned.
+	// For example, with constant buffers (256), this is why the allocation amount
+	// and the data that will be copied from the CPU can differ. 
+	unsigned int inputDataSize; 
+	unsigned int gpuBufferSize;
+
+	// Buffer/element sizes are expressed in bytes
+	unsigned int elementSize; 
 	unsigned int numberOfElements;
-	unsigned int elementSize; // expressed in bytes 
-	unsigned int bufferSize;
 
 	// Descriptor info //
 	unsigned int cbvIndex;

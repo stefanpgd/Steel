@@ -101,7 +101,7 @@ void Engine::InitializeProjects()
 {
 	// TODO: rn a bit convoluted, but in the future we likely initialize multiple projects?
 	// Maybe consider adding a "project" picker if it becomes relevant
-	activeProject = new TinyHybridProject();
+	activeProject = new HelloComputeProject();
 }
 
 void Engine::RegisterWindowClass()
