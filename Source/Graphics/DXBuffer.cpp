@@ -35,7 +35,7 @@ DXBuffer::DXBuffer(DXBufferProperties properties, const void* data, unsigned int
 
 void DXBuffer::UpdateData(const void* data)
 {
-	if(bufferProperties.isCPUAccesible)
+	if(bufferProperties.isCPUAccessible)
 	{
 		UINT8* pData;
 		buffer->Map(0, nullptr, (void**)&pData);
@@ -50,7 +50,7 @@ void DXBuffer::UpdateData(const void* data)
 
 bool DXBuffer::BufferTypeValidation()
 {
-	if(bufferProperties.isCPUAccesible && bufferProperties.isUnorderedAccess)
+	if(bufferProperties.isCPUAccessible && bufferProperties.isUnorderedAccess)
 	{
 		LOG(Log::MessageType::Error, "Buffers with Unordered Access cannot reside on either the UPLOAD or READBACK gpu heap");
 		return false;
@@ -81,13 +81,13 @@ void DXBuffer::AllocateResource()
 	// 2) Create commited resources 
 	ComPtr<ID3D12Device5> device = DXAccess::GetDevice();
 	CD3DX12_HEAP_PROPERTIES gpuHeap = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT);
-	if(bufferProperties.isCPUAccesible)
+	if(bufferProperties.isCPUAccessible)
 	{
 		gpuHeap = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD);
 	}
 
 	resourceState = D3D12_RESOURCE_STATE_COMMON;
-	if(bufferProperties.isCPUAccesible)
+	if(bufferProperties.isCPUAccessible)
 	{
 		// Resources that get created on the UPLOAD heap must use the state: GENERIC_READ.
 		resourceState = D3D12_RESOURCE_STATE_GENERIC_READ;
@@ -106,7 +106,7 @@ void DXBuffer::AllocateResource()
 
 void DXBuffer::UploadData(const void* data)
 {
-	if(bufferProperties.isCPUAccesible)
+	if(bufferProperties.isCPUAccessible)
 	{
 		UINT8* resourcePtr;
 

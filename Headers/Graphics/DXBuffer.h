@@ -13,7 +13,7 @@ struct DXBufferProperties
 	bool isConstantBuffer = true;
 	bool isUnorderedAccess = false;
 	bool isStructuredBuffer = false;
-	bool isCPUAccesible = false;
+	bool isCPUAccessible = false;
 };
 
 /// <summary>
