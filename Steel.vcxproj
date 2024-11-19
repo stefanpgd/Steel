@@ -88,6 +88,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Source\Graphics\DXBuffer.cpp" />
     <ClCompile Include="Source\Projects\TinyHybrid\BlendResultStage.cpp" />
     <ClCompile Include="Source\Projects\TinyHybrid\RTShadowsStage.cpp" />
     <ClCompile Include="Source\Graphics\Camera.cpp" />
@@ -130,6 +131,7 @@
     <ClCompile Include="Source\Projects\TinyHybrid\TinyHybridProject.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Headers\Graphics\DXBuffer.h" />
     <ClInclude Include="Headers\Projects\TinyHybrid\BlendResultStage.h" />
     <ClInclude Include="Headers\Graphics\Camera.h" />
     <ClInclude Include="Headers\Framework\Scene.h" />
