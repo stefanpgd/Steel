@@ -58,7 +58,7 @@ void RTShadowStage::CreateShaderResources()
 	outputBuffer = new Texture(width, height, DXGI_FORMAT_R8G8B8A8_UNORM);
 
 	DXBufferProperties bufferProperties;
-	bufferProperties.isCPUAccesible = true;
+	bufferProperties.isCPUAccessible = true;
 	bufferProperties.isConstantBuffer = true;
 	bufferProperties.isStructuredBuffer = false;
 

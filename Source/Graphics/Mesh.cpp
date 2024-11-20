@@ -35,7 +35,7 @@ Mesh::Mesh(tinygltf::Model& model, tinygltf::Primitive& primitive, glm::mat4& tr
 	DXBufferProperties bufferProperties;
 	bufferProperties.name = "Material Buffer";
 	bufferProperties.isConstantBuffer = false;
-	bufferProperties.isCPUAccesible = true;
+	bufferProperties.isCPUAccessible = true;
 	bufferProperties.isStructuredBuffer = true;
 
 	materialBuffer = new DXBuffer(bufferProperties, &Material, 1, sizeof(Material));
